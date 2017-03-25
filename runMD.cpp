@@ -15,6 +15,7 @@
 #include <vector>
 // our defined headers
 #include "parser.hpp"
+#include "killer.hpp"
 
 int main()
 {
@@ -33,27 +34,30 @@ int main()
   int i,j,k;
 
   // ~~~~~~~~~~~		Begin Program		~~~~~~~~~~//
-  //First line
+  // Comments :
+
   std::cout <<  "Starting runMD, Version 0.0 ...." << std::endl;
 
+  // Create our running objects
+  Killer killer;
+
+  // ~~~~~~~~~~			Get Input		~~~~~~~~~~//
+  // Comments:
 
   Parser parser;	//this creates our "Parser" class object, "parser"
+  status = parser.getInput(&numMol, boxdim, options);
+  if (status != 0)
+  {
+    return status;
+  }
   
-  parser.getInput(&numMol, boxdim, options);
   std::cout << "boxdim[1] = " << boxdim[1] << std::endl;
-  std::cout << "optons[0] = " << options[0] << std::endl;
+  std::cout << "options[0] = " << options[0] << std::endl;
   
-
-
-  // Testing zone ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  int a = 0, b = 0;
-  std::cout << a << ", " << b << std::endl;
-  parser.parse(&a,&b);	// pass the POINTERS &a and &b so we can act on their address 
-  std::cout << a << ", " << b << std::endl;
-  // END zone ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   //Last line
   std::cout << std::endl << "Exiting runMD with status :" << status << std::endl;
+  return status;
 
 }
 
