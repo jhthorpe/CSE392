@@ -25,7 +25,7 @@ int main()
   // options 		: 1D int array, stores extra options the user inputs
   
   // Variables for the simulation
-  int status,numMol;
+  int status=0,numMol=0;
   int options [1]={0};		
   float boxdim [3]={0.0,0.0,0.0};
 
@@ -39,7 +39,9 @@ int main()
 
   Parser parser;	//this creates our "Parser" class object, "parser"
   
-  parser.getInput(&numMol, boxdim[], options[]);
+  parser.getInput(&numMol, boxdim, options);
+  std::cout << "boxdim[1] = " << boxdim[1] << std::endl;
+  std::cout << "optons[0] = " << options[0] << std::endl;
   
 
 
