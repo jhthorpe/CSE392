@@ -4,9 +4,10 @@
 #include "parser.hpp"
 using namespace std;
 
-int Parser::getInput(int *numMol, float boxdim[], int options[])
+int Parser::getInput(int *N, float *sl, float *T, float *ts, int *ns, int options[])
 {
-  std::cout << "Parser called. Getting input..." << std::endl;
+  cout << "====================" << endl; 
+  cout << "Parser called. Getting input..." << endl;
 
   // Open input.dat
   fstream inFile;	// Create fstream class object, "inFile"
@@ -18,23 +19,28 @@ int Parser::getInput(int *numMol, float boxdim[], int options[])
     cout << "Parser could not open input.dat. Exiting." << endl;
     return 1;
   }
-
-  
+ 
+  // otherwise, read in values 
+  else
+  {
+    // Get initial values
+    inFile >> *N >> *sl >> *T >> *ts >> *ns; 
+  }
 
   // Close input.dat  
   inFile.close();
 
+  // Print what saw
+  cout << "Parser saw these values:" << endl;
+  cout << "Number of molecules : " << *N << endl;
+  cout << "Box length (nm) : " << *sl << endl; 
+  cout << "Temperature (K) : " << *T << endl; 
+  cout << "Time Step (fs) : " << *ts << endl; 
+  cout << "Number of Steps : " << *ns << endl; 
+
+  cout << "====================" << endl; 
+   
   return 0; 
 } 
-
-// my tester funtion, will later do stuff 
-int Parser::parse(int *a, int *b)
-{
-  std::cout << "hi there" << std::endl;
-  *a = 5;
-  *b = 20;
-  return 0; 
-}
-
 
 

@@ -5,7 +5,6 @@
 class Parser
 {
   public:
-    int getInput(int *, float *  , int * );
-    int parse(int *, int *); // this says we will be acting on pointers
+    int getInput(int *, float *  , float *, float *, int*, int * );	//actual parser
 };
 #endif
