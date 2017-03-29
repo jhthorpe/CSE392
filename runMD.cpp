@@ -15,43 +15,48 @@
 #include <vector>
 // our defined headers
 #include "parser.hpp"
+#include "killer.hpp"
 
 int main()
 {
   // Variable declarations
   // status 		: int, stores error and messages for output
-  // numMol		: int, number of molecules in simulation
-  // boxdim		: 1D float array, dimensions of our box
+  // N			: int, number of molecules in simulation (int)
+  // sl			: side length of the box (float, nm) 
+  // T			: temperature (float, K)
+  // ts			: time step (float, ns)
+  // ns			: number of time stimes (int)
   // options 		: 1D int array, stores extra options the user inputs
   
   // Variables for the simulation
-  int status,numMol;
+  int status=0,N=10,ns=100;
   int options [1]={0};		
-  float boxdim [3]={0.0,0.0,0.0};
+  float sl=10.0,T=298.15,ts=1.0;
 
   // Internal variables
   int i,j,k;
 
   // ~~~~~~~~~~~		Begin Program		~~~~~~~~~~//
-  //First line
+  // Comments :
+
   std::cout <<  "Starting runMD, Version 0.0 ...." << std::endl;
 
+  // Create our running objects
+  Killer killer;
+
+  // ~~~~~~~~~~			Get Input		~~~~~~~~~~//
+  // Comments:
 
   Parser parser;	//this creates our "Parser" class object, "parser"
-  
-  parser.getInput(&numMol, boxdim[], options[]);
-  
-
-
-  // Testing zone ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  int a = 0, b = 0;
-  std::cout << a << ", " << b << std::endl;
-  parser.parse(&a,&b);	// pass the POINTERS &a and &b so we can act on their address 
-  std::cout << a << ", " << b << std::endl;
-  // END zone ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  status = parser.getInput(&N, &sl, &T, &ts, &ns, options);
+  if (status != 0)
+  {
+    return status;
+  }
 
   //Last line
   std::cout << std::endl << "Exiting runMD with status :" << status << std::endl;
+  return status;
 
 }
 
