@@ -59,10 +59,24 @@ int main()
     return status;
   }
 
-  // ~~~~~~~~~~			Get Input		~~~~~~~~~~//
+  // ~~~~~~~~~~			Initialize Box		~~~~~~~~~~//
   // Comments:
-  vector<float> pos(3*N);
-  vector<float> vel(3*N);
+  cout << "N = " << N << endl;
+  i = N * 3;
+  vector<float> pos;
+  vector<float> vel;
+  pos.reserve(N*3);
+  vel.reserve(N*3);
+
+  cout << "size of pos : " << pos.capacity() << endl; 
+
+  Init builder;
+
+  cout << pos[0] << endl;
+  status = builder.initialize(&N,&sl,&T,&pos,&vel);
+
+  cout << pos[0] << endl;
+  
 
   //Last line
   std::cout << std::endl << "Exiting runMD with status :" << status << std::endl;
