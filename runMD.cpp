@@ -16,6 +16,8 @@
 // our defined headers
 #include "parser.hpp"
 #include "killer.hpp"
+#include "init.hpp"
+using namespace std;
 
 int main()
 {
@@ -26,6 +28,8 @@ int main()
   // T			: temperature (float, K)
   // ts			: time step (float, ns)
   // ns			: number of time stimes (int)
+  // pos		: 1D vector of positions, stored x(n),y(n+1),z(n+2) (vector<float>)
+  // vel		: 1D vector of velocities, stored dx(n),dy(n+1),dz(n+2) (vector<float>)
   // options 		: 1D int array, stores extra options the user inputs
   
   // Variables for the simulation
@@ -43,9 +47,10 @@ int main()
 
   // Create our running objects
   Killer killer;
+  Init init;
 
   // ~~~~~~~~~~			Get Input		~~~~~~~~~~//
-  // Comments:
+  // Comments: May want to test that the types are correct - Mar 28, 2017
 
   Parser parser;	//this creates our "Parser" class object, "parser"
   status = parser.getInput(&N, &sl, &T, &ts, &ns, options);
@@ -53,6 +58,11 @@ int main()
   {
     return status;
   }
+
+  // ~~~~~~~~~~			Get Input		~~~~~~~~~~//
+  // Comments:
+  vector<float> pos(3*N);
+  vector<float> vel(3*N);
 
   //Last line
   std::cout << std::endl << "Exiting runMD with status :" << status << std::endl;
