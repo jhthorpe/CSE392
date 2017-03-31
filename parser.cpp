@@ -4,7 +4,7 @@
 #include "parser.hpp"
 using namespace std;
 
-int Parser::getInput(int *N, float *sl, float *T, float *ts, int *ns, int options[])
+int Parser::getInput(int *N, float *sl, float *T, float *m, float *ts, int *ns, int options[])
 {
   cout << "====================" << endl; 
   cout << "Parser called. Getting input..." << endl;
@@ -24,7 +24,7 @@ int Parser::getInput(int *N, float *sl, float *T, float *ts, int *ns, int option
   else
   {
     // Get initial values
-    inFile >> *N >> *sl >> *T >> *ts >> *ns; 
+    inFile >> *N >> *sl >> *T >> *m >> *ts >> *ns; 
   }
 
   // Close input.dat  
@@ -35,6 +35,7 @@ int Parser::getInput(int *N, float *sl, float *T, float *ts, int *ns, int option
   cout << "Number of molecules : " << *N << endl;
   cout << "Box length (nm) : " << *sl << endl; 
   cout << "Temperature (K) : " << *T << endl; 
+  cout << "Molecule mass (?) : " << *m << endl; 
   cout << "Time Step (fs) : " << *ts << endl; 
   cout << "Number of Steps : " << *ns << endl; 
 

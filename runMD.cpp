@@ -13,6 +13,7 @@
 #include <iostream>
 #include <new>
 #include <vector>
+#include <cmath>
 // our defined headers
 #include "parser.hpp"
 #include "killer.hpp"
@@ -26,6 +27,7 @@ int main()
   // N			: int, number of molecules in simulation (int)
   // sl			: side length of the box (float, nm) 
   // T			: temperature (float, K)
+  // m			: mass (float, ???)
   // ts			: time step (float, ns)
   // ns			: number of time stimes (int)
   // pos		: 1D vector of positions, stored x(n),y(n+1),z(n+2) (vector<float>)
@@ -35,7 +37,7 @@ int main()
   // Variables for the simulation
   int status=0,N=10,ns=100;
   int options [1]={0};		
-  float sl=10.0,T=298.15,ts=1.0;
+  float sl=10.0,T=298.15,m=10,ts=1.0;
 
   // Internal variables
   int i,j,k;
@@ -53,30 +55,28 @@ int main()
   // Comments: May want to test that the types are correct - Mar 28, 2017
 
   Parser parser;	//this creates our "Parser" class object, "parser"
-  status = parser.getInput(&N, &sl, &T, &ts, &ns, options);
+  status = parser.getInput(&N, &sl, &T, &m, &ts, &ns, options);
   if (status != 0)
   {
+    killer.kill(status);
     return status;
   }
 
   // ~~~~~~~~~~			Initialize Box		~~~~~~~~~~//
   // Comments:
-  cout << "N = " << N << endl;
   i = N * 3;
   vector<float> pos;
   vector<float> vel;
   pos.reserve(N*3);
   vel.reserve(N*3);
 
-  cout << "size of pos : " << pos.capacity() << endl; 
-
   Init builder;
 
-  cout << pos[0] << endl;
-  status = builder.initialize(&N,&sl,&T,&pos,&vel);
-
-  cout << pos[0] << endl;
-  
+  status = builder.initialize(&N,&sl,&T,&m,&pos,&vel);
+  if (status != 0)
+  {
+    killer.kill(status);
+  }
 
   //Last line
   std::cout << std::endl << "Exiting runMD with status :" << status << std::endl;

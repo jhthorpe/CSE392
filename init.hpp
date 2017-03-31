@@ -7,8 +7,8 @@ using namespace std;
 class Init
 {
   public:
-    // number of mol, box length, temp, position vector, velocity vector
-    int initialize(int *, float *, float *, vector<float> *, vector<float> * );
+    // number of mol, box length, temp, mass, position vector, velocity vector
+    int initialize(int *, float *,float *, float *, vector<float> *, vector<float> * );
 };
 
 #endif
