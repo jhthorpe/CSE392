@@ -35,9 +35,9 @@ void Verlet(vector<double> mass, vector<double> position, vector<double> velocit
       position[ctr+1] = position[ctr+1] + velocity[ctr+1]*tstep + pow(tstep,2)*f1[1]/(2*mass[ctr/3]);
       position[ctr+2] = position[ctr+2] + velocity[ctr+2]*tstep + pow(tstep,2)*f1[2]/(2*mass[ctr/3]);
 
-      position[ctr]+= floor(position[ctr]/boxx)*boxx; 
-      position[ctr+1]+= floor(position[ctr+1]/boxy)*boxy;
-      position[ctr+2]+= floor(position[ctr+2]/boxz)*boxz;
+      position[ctr]-= floor(position[ctr]/boxx)*boxx; 
+      position[ctr+1]-= floor(position[ctr+1]/boxy)*boxy;
+      position[ctr+2]-= floor(position[ctr+2]/boxz)*boxz;
        
       //Update velocity
       double f2 = force(position[ctr], position[ctr+1], position[ctr+2]);
