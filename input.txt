@@ -1,6 +1,6 @@
-100		// Number of molecules (int)
+5		// Number of molecules (int)
 10		// box length (float, nm)
 298.0		// Temperature (float, K)
-1.0		// mass (float, ???)
+1.0		// molecular mass (float, g/mol)
 1.0		// time step (float, fs)
 10		// Number of time steps (int)

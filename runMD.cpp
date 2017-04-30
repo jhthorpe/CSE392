@@ -27,17 +27,17 @@ int main()
   // N			: int, number of molecules in simulation (int)
   // sl			: side length of the box (float, nm) 
   // T			: temperature (float, K)
-  // m			: mass (float, ???)
   // ts			: time step (float, ns)
   // ns			: number of time stimes (int)
+  // m			: mass (???) 
   // pos		: 1D vector of positions, stored x(n),y(n+1),z(n+2) (vector<float>)
-  // vel		: 1D vector of velocities, stored dx(n),dy(n+1),dz(n+2) (vector<float>)
+  // vel		: 1D vector of velocities, stored dx(n),dy(n+1),dz(n+2) (vector<float>, len/time)
   // options 		: 1D int array, stores extra options the user inputs
   
   // Variables for the simulation
   int status=0,N=10,ns=100;
   int options [1]={0};		
-  float sl=10.0,T=298.15,m=10,ts=1.0;
+  float sl=10.0,m=1.0,T=298.15,ts=1.0;
 
   // Internal variables
   int i,j,k;

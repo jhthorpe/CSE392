@@ -6,6 +6,8 @@ using namespace std;
 
 int Parser::getInput(int *N, float *sl, float *T, float *m, float *ts, int *ns, int options[])
 {
+  int i;
+
   cout << "====================" << endl; 
   cout << "Parser called. Getting input..." << endl;
 
@@ -35,9 +37,16 @@ int Parser::getInput(int *N, float *sl, float *T, float *m, float *ts, int *ns, 
   cout << "Number of molecules : " << *N << endl;
   cout << "Box length (nm) : " << *sl << endl; 
   cout << "Temperature (K) : " << *T << endl; 
-  cout << "Molecule mass (?) : " << *m << endl; 
+  cout << "Molecule mass (g/mol) : " << *m << endl; 
   cout << "Time Step (fs) : " << *ts << endl; 
   cout << "Number of Steps : " << *ns << endl; 
+
+  // Correct units
+  cout << "Converting units. Mass -> kg/particle" << endl;
+
+  *m = *m / 6.02214e26; 
+
+  cout << "new mass: " << *m << endl;
 
   cout << "====================" << endl; 
    
