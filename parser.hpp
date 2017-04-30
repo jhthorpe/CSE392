@@ -5,6 +5,7 @@
 class Parser
 {
   public:
-    int getInput(int *, float * ,float *, float *, float *, int*, int * );	//actual parser
+    //num part, box length, temp, mass, timestep, num steps, LJ sigma, LJ epsilon, options
+    int getInput(int *, float * ,float *, float *, float *, int*, float *, float *,int * );	//actual parser
 };
 #endif

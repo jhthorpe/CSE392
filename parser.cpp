@@ -4,7 +4,7 @@
 #include "parser.hpp"
 using namespace std;
 
-int Parser::getInput(int *N, float *sl, float *T, float *m, float *ts, int *ns, int options[])
+int Parser::getInput(int *N, float *sl, float *T, float *m, float *ts, int *ns, float *sig, float *eps, int options[])
 {
   int i;
 
@@ -26,7 +26,7 @@ int Parser::getInput(int *N, float *sl, float *T, float *m, float *ts, int *ns, 
   else
   {
     // Get initial values
-    inFile >> *N >> *sl >> *T >> *m >> *ts >> *ns; 
+    inFile >> *N >> *sl >> *T >> *m >> *ts >> *ns >> *sig >> *eps; 
   }
 
   // Close input.dat  
@@ -40,13 +40,20 @@ int Parser::getInput(int *N, float *sl, float *T, float *m, float *ts, int *ns, 
   cout << "Molecule mass (g/mol) : " << *m << endl; 
   cout << "Time Step (fs) : " << *ts << endl; 
   cout << "Number of Steps : " << *ns << endl; 
+  cout << "LJ sigma (m) : " << *sig << endl;
+  cout << "LJ epsilon (J) : " << *eps << endl;
 
   // Correct units
-  cout << "Converting units. Mass -> kg/particle" << endl;
-
+  cout << endl;
+  cout << "Converting units..." << endl;
+  cout <<  "Mass -> kg/particle" << endl;
   *m = *m / 6.02214e26; 
-
   cout << "new mass: " << *m << endl;
+
+  cout << "Meters -> nm" << endl;
+  *sig = *sig * 1.0e9;
+  cout << "new LJ sigma : " << *sig << endl; 
+
 
   cout << "====================" << endl; 
    

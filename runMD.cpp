@@ -18,6 +18,7 @@
 #include "parser.hpp"
 #include "killer.hpp"
 #include "init.hpp"
+#include "forces.hpp"
 using namespace std;
 
 int main()
@@ -37,7 +38,7 @@ int main()
   // Variables for the simulation
   int status=0,N=10,ns=100;
   int options [1]={0};		
-  float sl=10.0,m=1.0,T=298.15,ts=1.0;
+  float sl=10.0,m=1.0,T=298.15,ts=1.0,sig=1.0,eps=0.0;
 
   // Internal variables
   int i,j,k;
@@ -55,7 +56,7 @@ int main()
   // Comments: May want to test that the types are correct - Mar 28, 2017
 
   Parser parser;	//this creates our "Parser" class object, "parser"
-  status = parser.getInput(&N, &sl, &T, &m, &ts, &ns, options);
+  status = parser.getInput(&N, &sl, &T, &m, &ts, &ns, &sig, &eps, options);
   if (status != 0)
   {
     killer.kill(status);
@@ -77,6 +78,20 @@ int main()
   {
     killer.kill(status);
   }
+
+  // ~~~~~~~~~~			Testing forces		~~~~~~~~~~//
+  // Comments: 
+
+  vector<float> force;
+  force.reserve(N*3);
+  
+  Forces forces;	//Forces class object, forces
+
+  forces.Test();
+  forces.LJ_seq(&N,&sl,&sig,&eps,&pos,&force);
+
+  // ~~~~~~~~~~			Start verlet		~~~~~~~~~~//
+  // Comments:
 
   //Last line
   std::cout << std::endl << "Exiting runMD with status :" << status << std::endl;

@@ -4,3 +4,5 @@
 1.0		// molecular mass (float, g/mol)
 1.0		// time step (float, fs)
 10		// Number of time steps (int)
+3.3e-10		// LJ sigma (m)
+1.65e-21	// LJ epsilon (kg m^2/s^2)
