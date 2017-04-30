@@ -33,12 +33,14 @@ int Init::initialize(int *N, float *sl, float *T,float *m, vector<float> *pos, v
 
   // Internal variables
   int i,flag;
-  float kB = 1.38064852e-23; 		// in J/K
+  float kB = 1.38064852e-23; 		// in J/K, which coincidentely works for nm^2/ns^2
 
   cout << "Initializer called..." << endl;
 
   int pl = ceil(pow(*N,1.0/3.0));
   float bl = float(*sl /float(pl+1)); 
+
+  // One might argue that this is not the best approach for the velocities, but oh well
   float stdv = pow(kB * *T / *m,0.5);
 
   random_device generator;
@@ -59,13 +61,13 @@ int Init::initialize(int *N, float *sl, float *T,float *m, vector<float> *pos, v
 
     //create random number generator and distribution object
 
-    (*vel)[i]=vdist(generator);
+    (*vel)[i]=vdist(generator);					// x velocity
     (*vel)[i+1]=vdist(generator);				// y velocity
     (*vel)[i+2]=vdist(generator);				// z velocity
 
-    cout << i << endl;
-    cout << (*pos)[i] << ", " << (*pos)[i+1] << ", " << (*pos)[i+2] << endl;
-    cout << (*vel)[i] << ", " << (*vel)[i+1] << ", " << (*vel)[i+2] << endl;
+    //cout << i << endl;
+    //cout << (*pos)[i] << ", " << (*pos)[i+1] << ", " << (*pos)[i+2] << endl;
+    //cout << (*vel)[i] << ", " << (*vel)[i+1] << ", " << (*vel)[i+2] << endl;
   }
  
   return 0;

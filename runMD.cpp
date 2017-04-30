@@ -29,7 +29,7 @@ int main()
   // T			: temperature (float, K)
   // ts			: time step (float, ns)
   // ns			: number of time stimes (int)
-  // m			: mass (???) 
+  // m			: mass (kg/particle) 
   // pos		: 1D vector of positions, stored x(n),y(n+1),z(n+2) (vector<float>)
   // vel		: 1D vector of velocities, stored dx(n),dy(n+1),dz(n+2) (vector<float>, len/time)
   // options 		: 1D int array, stores extra options the user inputs
@@ -63,7 +63,7 @@ int main()
   }
 
   // ~~~~~~~~~~			Initialize Box		~~~~~~~~~~//
-  // Comments:
+  // Comments: Needs to have parallel treatment. Velocities are in nm^2/ns^2. 
   i = N * 3;
   vector<float> pos;
   vector<float> vel;
