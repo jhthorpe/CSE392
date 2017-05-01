@@ -4,7 +4,7 @@
 #include "parser.hpp"
 using namespace std;
 
-int Parser::getInput(int *N, float *sl, float *T, float *m, float *ts, int *ns, float *sig, float *eps, int options[])
+int Parser::getInput(int *N, double *sl, double *T, double *m, double *ts, int *ns, double *sig, double *eps, int options[])
 {
   int i;
 

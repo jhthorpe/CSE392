@@ -14,7 +14,7 @@ void Forces::Test()
 }
 
 //sequential LJ force evaluation, no boundary conditions. Slow.
-int Forces::LJ_seq(int *N, float *sl, float *sig, float *eps, vector<float> *pos, vector<float> *force)
+int Forces::LJ_seq(int *N, double *sl, double *sig, double *eps, vector<double> *pos, vector<double> *force)
 {
   //Varaibles
   // N		: number of input molecules
@@ -26,7 +26,7 @@ int Forces::LJ_seq(int *N, float *sl, float *sig, float *eps, vector<float> *pos
 
   //internal variables
   int i,j;
-  float f, r,rx,ry,rz;
+  double f, r,rx,ry,rz;
   cout << "Leonard Jones called" << endl;
 
   //check that multiplying by unit vector is alright 
@@ -58,7 +58,7 @@ int Forces::LJ_seq(int *N, float *sl, float *sig, float *eps, vector<float> *pos
   for (i=0; i < *N ; i++)
   {
     ffile << (*force)[3*i] << "  " << (*force)[3*i+1] << "  " << (*force)[3*i+2] << "\n"; 
-  }
+  };
   ffile.close(); 
 
   return 0;  

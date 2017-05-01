@@ -12,7 +12,7 @@ class Forces
 
     //sequential LJ forces
     //number of mol, box length, sigma param, epsilon param, position vector, forces vector 
-    int LJ_seq(int *, float *, float *, float *, vector<float> * , vector<float> *); 
+    int LJ_seq(int *, double *, double *, double *, vector<double> * , vector<double> *); 
 };
 
 #endif

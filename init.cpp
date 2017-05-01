@@ -19,7 +19,7 @@ void tester()
 // Currently, this creates an array of atoms
 // Obviously, this will need to be improved later
 
-int Init::initialize(int *N, float *sl, float *T,float *m, vector<float> *pos, vector<float> *vel)
+int Init::initialize(int *N, double *sl, double *T,vector<double> *m, vector<double> *pos, vector<double> *vel)
 {
   
   // Varaibles
@@ -34,29 +34,31 @@ int Init::initialize(int *N, float *sl, float *T,float *m, vector<float> *pos, v
 
   // Internal variables
   int i,flag;
-  float kB = 1.38064852e-23; 		// in J/K, which coincidentely works for nm^2/ns^2
+  double kB = 1.38064852e-23; 		// in J/K, which coincidentely works for nm^2/ns^2
 
   cout << "Initializer called..." << endl;
 
   int pl = ceil(pow(*N,1.0/3.0));
-  float bl = float(*sl /float(pl+1)); 
+  double bl = double(*sl /double(pl+1)); 
 
   cout << "particles will be placed " << bl << " nm apart." << endl;
 
-  // One might argue that this is not the best approach for the velocities, but oh well
-  float stdv = pow(kB * *T / *m,0.5);
+  random_device generator;		//random_device class object, generator
 
-  random_device generator;
-  normal_distribution<float> vdist(0,stdv);
+  // One might argue that this is not the best approach for the velocities, but oh well
+ // double stdv = pow(kB * *T / (*m)[0],0.5);
+ // normal_distribution<double> vdist(0,stdv);
  
   // Create our cube of molecules 
   for (i=0; i < *N; i++) 
   {
+    double stdv = pow(kB * *T / (*m)[i],0.5);
+    normal_distribution<double> vdist(0,stdv);
     // I could, of course, have used 3 loops, but this is better flops/mops ;)
 
-    (*pos)[3*i] = bl * float(i % pl);						// x position in nm 
-    (*pos)[3*i+1] = bl * float((i / pl) % pl);					// y position in nm
-    (*pos)[3*i+2] = bl * float((i / int(pow(pl,2.0))) % int(pow(pl,2.0)));	// z position in nm
+    (*pos)[3*i] = bl * double(i % pl);						// x position in nm 
+    (*pos)[3*i+1] = bl * double((i / pl) % pl);					// y position in nm
+    (*pos)[3*i+2] = bl * double((i / int(pow(pl,2.0))) % int(pow(pl,2.0)));	// z position in nm
 
     (*vel)[3*i]=vdist(generator);					// x velocity in nm/ns
     (*vel)[3*i+1]=vdist(generator);				// y velocity in nm/ns
