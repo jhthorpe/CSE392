@@ -1,5 +1,6 @@
 // This initializes our simulation space
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <cmath>
 #include <math.h>
@@ -62,6 +63,24 @@ int Init::initialize(int *N, float *sl, float *T,float *m, vector<float> *pos, v
     (*vel)[3*i+2]=vdist(generator);				// z velocity in nm/ns
 
   }
+
+  // Write out initial position and velocities
+  ofstream posfile; 		//ofstream class object, posfile, for initial positions
+  ofstream velfile; 		//ofstream class object, velfile, for initial velocities
+
+  posfile.open("init_pos.txt");
+  velfile.open("init_vel.txt");
+
+  posfile << "xpos, ypos, zpos (nm)\n";
+  velfile << "x velocity, y velocity, z velocity (nm/ns)\n"; 
+  for (i=0; i < *N ; i++)
+  {
+    posfile << (*pos)[3*i] << "  " << (*pos)[3*i+1] << "  " << (*pos)[3*i+2] << "\n";
+    velfile << (*vel)[3*i] << "  " << (*vel)[3*i+1] << "  " << (*vel)[3*i+2] << "\n";
+  }
+  
+  posfile.close();
+  velfile.close();
 
   return 0;
 }

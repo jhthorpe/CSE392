@@ -86,7 +86,6 @@ int main()
   
   Forces forces;	//Forces class object, forces
 
-  forces.Test();
   forces.LJ_seq(&N,&sl,&sig,&eps,&pos,&force);
 
   // ~~~~~~~~~~			Start verlet		~~~~~~~~~~//

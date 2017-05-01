@@ -60,11 +60,11 @@ int Forces::LJ_seq(int *N, float *sl, float *sig, float *eps, vector<float> *pos
     };
   };
  
-  cout << "particle 0 : "<< (*pos)[0] << ", " << (*pos)[1] << ", " << (*pos)[2] << endl;
-  cout << "particle 1 : "<< (*pos)[3] << ", " << (*pos)[4] << ", "<<  (*pos)[5] << endl;
+ // cout << "particle 0 : "<< (*pos)[0] << ", " << (*pos)[1] << ", " << (*pos)[2] << endl;
+ // cout << "particle 1 : "<< (*pos)[3] << ", " << (*pos)[4] << ", "<<  (*pos)[5] << endl;
 
-  cout << "forces on particle 0:" << (*force)[0] <<","<<(*force)[1]<<","<<(*force)[2]<<","<< endl; 
-  cout << "forces on particle 1:" << (*force)[3] <<","<<(*force)[4]<<","<<(*force)[5]<<","<< endl; 
+ // cout << "forces on particle 0:" << (*force)[0] <<","<<(*force)[1]<<","<<(*force)[2]<<","<< endl; 
+ // cout << "forces on particle 1:" << (*force)[3] <<","<<(*force)[4]<<","<<(*force)[5]<<","<< endl; 
 
 
   return 0;  
