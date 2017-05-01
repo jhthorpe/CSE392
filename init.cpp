@@ -84,6 +84,8 @@ int Init::initialize(int *N, double *sl, double *T,vector<double> *m, vector<dou
   posfile.close();
   velfile.close();
 
+  cout << "Initial positions written to init_pos.txt\nInitial velocities written to init_vel.txt" << endl;
+
   return 0;
 }
 

@@ -4,7 +4,7 @@
 #include "parser.hpp"
 using namespace std;
 
-int Parser::getInput(int *N, double *sl, double *T, double *m, double *ts, int *ns, double *sig, double *eps, int options[])
+int Parser::getInput(int *N, double *sl, double *T, double *m, double *ts, int *ns, double *sig, double *eps, double *q, int options[])
 {
   int i;
 
@@ -26,7 +26,7 @@ int Parser::getInput(int *N, double *sl, double *T, double *m, double *ts, int *
   else
   {
     // Get initial values
-    inFile >> *N >> *sl >> *T >> *m >> *ts >> *ns >> *sig >> *eps; 
+    inFile >> *N >> *sl >> *T >> *m >> *ts >> *ns >> *sig >> *eps >> *q; 
   }
 
   // Close input.dat  
@@ -42,6 +42,7 @@ int Parser::getInput(int *N, double *sl, double *T, double *m, double *ts, int *
   cout << "Number of Steps : " << *ns << endl; 
   cout << "LJ sigma (m) : " << *sig << endl;
   cout << "LJ epsilon (J) : " << *eps << endl;
+  cout << "Charges : " << *q << endl;
 
   // Correct units
   cout << endl;
@@ -53,6 +54,10 @@ int Parser::getInput(int *N, double *sl, double *T, double *m, double *ts, int *
   cout << "Meters -> nm" << endl;
   *sig = *sig * 1.0e9;
   cout << "new LJ sigma : " << *sig << endl; 
+
+  cout << "Charges -> Coulombs " << endl;
+  *q = *q * 1.9e-19;
+  cout << "new charges : " << *q << endl;
 
 
   cout << "====================" << endl; 
