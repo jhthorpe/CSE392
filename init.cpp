@@ -40,6 +40,8 @@ int Init::initialize(int *N, float *sl, float *T,float *m, vector<float> *pos, v
   int pl = ceil(pow(*N,1.0/3.0));
   float bl = float(*sl /float(pl+1)); 
 
+  cout << "particles will be placed " << bl << " nm apart." << endl;
+
   // One might argue that this is not the best approach for the velocities, but oh well
   float stdv = pow(kB * *T / *m,0.5);
 

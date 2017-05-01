@@ -12,7 +12,7 @@ void Forces::Test()
   cout << "forces called" << endl;
 }
 
-//sequential LJ force evaluation
+//sequential LJ force evaluation, no boundary conditions. Slow.
 int Forces::LJ_seq(int *N, float *sl, float *sig, float *eps, vector<float> *pos, vector<float> *force)
 {
   //Varaibles
@@ -30,8 +30,6 @@ int Forces::LJ_seq(int *N, float *sl, float *sig, float *eps, vector<float> *pos
  // r=1.0;
  // f = (24e0 * *eps / *sig) * (2e0 * pow(*sig/r,13) - pow(*sig/r,7) );
  // cout << "single force over r nm : " << f << endl;
-
-  //The dumb, slow way
 
   //check that multiplying by unit vector is alright 
   for (i=0; i < *N; i++)

@@ -80,7 +80,7 @@ int main()
   }
 
   // ~~~~~~~~~~			Testing forces		~~~~~~~~~~//
-  // Comments: make sure the directionality is being handled correctly... 
+  // Comments: make sure the directionality is being handled correctly... also add in boundary conditions 
 
   vector<float> force(N*3, 0.0);
   
