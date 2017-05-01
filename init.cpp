@@ -51,19 +51,16 @@ int Init::initialize(int *N, float *sl, float *T,float *m, vector<float> *pos, v
   {
     // I could, of course, have used 3 loops, but this is better flops/mops ;)
 
-    (*pos)[i] = bl * float(i % pl);						// x position in nm 
-    (*pos)[i+1] = bl * float((i / pl) % pl);					// y position in nm
-    (*pos)[i+2] = bl * float((i / int(pow(pl,2.0))) % int(pow(pl,2.0)));	// z position in nm
+    (*pos)[3*i] = bl * float(i % pl);						// x position in nm 
+    (*pos)[3*i+1] = bl * float((i / pl) % pl);					// y position in nm
+    (*pos)[3*i+2] = bl * float((i / int(pow(pl,2.0))) % int(pow(pl,2.0)));	// z position in nm
 
-    (*vel)[i]=vdist(generator);					// x velocity in nm/ns
-    (*vel)[i+1]=vdist(generator);				// y velocity in nm/ns
-    (*vel)[i+2]=vdist(generator);				// z velocity in nm/ns
+    (*vel)[3*i]=vdist(generator);					// x velocity in nm/ns
+    (*vel)[3*i+1]=vdist(generator);				// y velocity in nm/ns
+    (*vel)[3*i+2]=vdist(generator);				// z velocity in nm/ns
 
-    cout << i << endl;
-    cout << (*pos)[i] << ", " << (*pos)[i+1] << ", " << (*pos)[i+2] << endl;
-    cout << (*vel)[i] << ", " << (*vel)[i+1] << ", " << (*vel)[i+2] << endl;
   }
- 
+
   return 0;
 }
 

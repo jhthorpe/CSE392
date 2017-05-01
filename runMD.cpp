@@ -80,10 +80,9 @@ int main()
   }
 
   // ~~~~~~~~~~			Testing forces		~~~~~~~~~~//
-  // Comments: 
+  // Comments: make sure the directionality is being handled correctly... 
 
-  vector<float> force;
-  force.reserve(N*3);
+  vector<float> force(N*3, 0.0);
   
   Forces forces;	//Forces class object, forces
 
