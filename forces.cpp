@@ -1,5 +1,6 @@
 // Force evaluations
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <cmath>
 #include <math.h>
@@ -27,9 +28,6 @@ int Forces::LJ_seq(int *N, float *sl, float *sig, float *eps, vector<float> *pos
   int i,j;
   float f, r,rx,ry,rz;
   cout << "Leonard Jones called" << endl;
- // r=1.0;
- // f = (24e0 * *eps / *sig) * (2e0 * pow(*sig/r,13) - pow(*sig/r,7) );
- // cout << "single force over r nm : " << f << endl;
 
   //check that multiplying by unit vector is alright 
   for (i=0; i < *N; i++)
@@ -42,30 +40,26 @@ int Forces::LJ_seq(int *N, float *sl, float *sig, float *eps, vector<float> *pos
       r=pow(pow(rx,2)+pow(ry,2)+pow(rz,2),0.5);
 
       f = (24e0 * *eps / *sig) * (2e0 * pow(*sig/r,13) - pow(*sig/r,7) );
-//      cout << "force i= " << i << ", j= "<< j << " : " << f << endl;
 
-     (*force)[3*i] -= f * (rx/r);
-     (*force)[3*j] += f * (rx/r);
-     (*force)[3*i+1] -= f * (ry/r);
-     (*force)[3*j+1] += f * (ry/r);
-     (*force)[3*i+2] -= f * (rz/r);
-     (*force)[3*j+2] += f * (rz/r);
- 
-//      (*force)[3*i] += (24e0 * *eps / *sig) * (2e0 * pow(*sig/rx,13) - pow(*sig/rx,7) )*(rx/r);	// x force in kg nm/ ns^2	
-//      (*force)[3*j] -= (24e0 * *eps / *sig) * (2e0 * pow(*sig/rx,13) - pow(*sig/rx,7) )*(rx/r);	// x force in kg nm/ ns^2	
-//      (*force)[3*i+1] += (24e0 * *eps / *sig) * (2e0 * pow(*sig/ry,13) - pow(*sig/ry,7) )*(ry/r);	// y force in kg nm/ ns^2	
-//      (*force)[3*j+1] -= (24e0 * *eps / *sig) * (2e0 * pow(*sig/ry,13) - pow(*sig/ry,7) )*(ry/r);	// y force in kg nm/ ns^2	
-//      (*force)[3*i+2] += (24e0 * *eps / *sig) * (2e0 * pow(*sig/rz,13) - pow(*sig/rz,7) )*(rz/r);	// z force in kg nm/ ns^2	
-//      (*force)[3*j+2] -= (24e0 * *eps / *sig) * (2e0 * pow(*sig/rz,13) - pow(*sig/rz,7) )*(rz/r);	// z force in kg nm/ ns^2	
+      (*force)[3*i] -= f * (rx/r);
+      (*force)[3*j] += f * (rx/r);
+      (*force)[3*i+1] -= f * (ry/r);
+      (*force)[3*j+1] += f * (ry/r);
+      (*force)[3*i+2] -= f * (rz/r);
+      (*force)[3*j+2] += f * (rz/r);
     };
   };
- 
- // cout << "particle 0 : "<< (*pos)[0] << ", " << (*pos)[1] << ", " << (*pos)[2] << endl;
- // cout << "particle 1 : "<< (*pos)[3] << ", " << (*pos)[4] << ", "<<  (*pos)[5] << endl;
 
- // cout << "forces on particle 0:" << (*force)[0] <<","<<(*force)[1]<<","<<(*force)[2]<<","<< endl; 
- // cout << "forces on particle 1:" << (*force)[3] <<","<<(*force)[4]<<","<<(*force)[5]<<","<< endl; 
 
+  //Comment all this out if you don't want to see this 
+  ofstream ffile;
+  ffile.open("forces.txt");
+  ffile << "fx, fy, fz (kg nm / ns^2)\n";
+  for (i=0; i < *N ; i++)
+  {
+    ffile << (*force)[3*i] << "  " << (*force)[3*i+1] << "  " << (*force)[3*i+2] << "\n"; 
+  }
+  ffile.close(); 
 
   return 0;  
 };
