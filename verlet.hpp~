@@ -1,0 +1,14 @@
+// header file for class verlet                                                                                                                                      
+#ifndef _VERLET_HPP_
+#define _VERLET_HPP_
+#include <vector>
+using namespace std;
+
+class verlet
+{
+public:
+  // number of mol, number of time steps, box length, temp, mass, position vector, velocity vector                                                                                                       
+  void verlet(int *, int *,double *, double *, vector<double> *, vector<double> *, vector<double> * );
+};
+
+#endif
