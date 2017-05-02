@@ -8,7 +8,7 @@ class Init
 {
   public:
     // number of mol, box length, temp, mass, position vector, velocity vector
-    int initialize(int *, float *,float *, float *, vector<float> *, vector<float> * );
+    int initialize(int *, double *,double *, vector<double> *, vector<double> *, vector<double> * );
 };
 
 #endif
