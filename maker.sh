@@ -1,2 +1,2 @@
 #! /bin/bash
-g++ -o runMD runMD.cpp parser.cpp killer.cpp init.cpp forces.cpp
+g++ -o runMD runMD.cpp parser.cpp killer.cpp init.cpp forces.cpp verlet.cpp

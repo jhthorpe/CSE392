@@ -25,8 +25,6 @@ int Forces::LJ_seq(int *N, double *sl, double *sig, double *eps, vector<double> 
   int i,j;
   double f, r,rx,ry,rz;
 
-  cout << "Calculating Lennard-Jones....\n";
-
   //check that multiplying by unit vector is alright 
   for (i=0; i < *N; i++)
   {
@@ -79,8 +77,6 @@ int Forces::elc_seq(int *N, double *sl, vector<double> *q, vector<double> *pos, 
   double fx,fy,fz,f;
   double rx,ry,rz,r;
  
-  cout << "Calculating Electrostatic....\n";
-
   for (i=0; i < *N; i++)
   {
     for (j=i+1; j < *N; j++)
