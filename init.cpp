@@ -39,16 +39,12 @@ int Init::initialize(int *N, double *sl, double *T,vector<double> *m, vector<dou
   cout << "Initializer called..." << endl;
 
   int pl = ceil(pow(*N,1.0/3.0));
-  double bl = double(*sl /double(pl+1)); 
+  double bl = double((*sl-0.1) /double(pl+1)); 
 
   cout << "particles will be placed " << bl << " nm apart." << endl;
 
   random_device generator;		//random_device class object, generator
 
-  // One might argue that this is not the best approach for the velocities, but oh well
- // double stdv = pow(kB * *T / (*m)[0],0.5);
- // normal_distribution<double> vdist(0,stdv);
- 
   // Create our cube of molecules 
   for (i=0; i < *N; i++) 
   {
@@ -56,9 +52,9 @@ int Init::initialize(int *N, double *sl, double *T,vector<double> *m, vector<dou
     normal_distribution<double> vdist(0,stdv);
     // I could, of course, have used 3 loops, but this is better flops/mops ;)
 
-    (*pos)[3*i] = bl * double(i % pl);						// x position in nm 
-    (*pos)[3*i+1] = bl * double((i / pl) % pl);					// y position in nm
-    (*pos)[3*i+2] = bl * double((i / int(pow(pl,2.0))) % int(pow(pl,2.0)));	// z position in nm
+    (*pos)[3*i] = 0.1 + bl * double(i % pl);						// x position in nm 
+    (*pos)[3*i+1] = 0.1 + bl * double((i / pl) % pl);					// y position in nm
+    (*pos)[3*i+2] = 0.1 +bl * double((i / int(pow(pl,2.0))) % int(pow(pl,2.0)));	// z position in nm
 
     (*vel)[3*i]=vdist(generator);					// x velocity in nm/ns
     (*vel)[3*i+1]=vdist(generator);				// y velocity in nm/ns
