@@ -103,7 +103,7 @@ int main()
 
   verlet v;           //verlet class object, v
 
-  v.Integration(&N,&ns,&ts,&sl,&sig,&eps,&mass,&pos,&vel);
+  v.Integration(&N,&ns,&ts,&sl,&sig,&eps,&q,&mass,&pos,&vel);
 
   //Last line
   cout << endl << "Exiting runMD with status :" << status << endl;

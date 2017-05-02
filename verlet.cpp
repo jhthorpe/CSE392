@@ -11,7 +11,7 @@ using namespace std;
 //For now, just for Lennard Jones force between gas of neutral atoms
 //Requires prior initialization of 1D vectors mass, position and velocity 
 
-void verlet:: Integration(int *N, int *nsteps, double *tstep, double *boxL, double *sig, double *eps, vector<double> *m, vector<double> *pos, vector<double> *vel) {
+void verlet:: Integration(int *N, int *nsteps, double *tstep, double *boxL, double *sig, double *eps, vector<double> *q, vector<double> *m, vector<double> *pos, vector<double> *vel) {
 
   // Varaibles                                                                                                                                          
   // N          : number of molecules                                                                                                                                        
@@ -20,6 +20,7 @@ void verlet:: Integration(int *N, int *nsteps, double *tstep, double *boxL, doub
   // boxL       : box length
   // sig        : sigma in Lennard Jones potential
   // eps        : epsilon in Lennard Jones potential
+  // q          : 1D vector of charge (size N)
   // m          : 1D vector of mass (size N)                                                                                                                                 
   // pos        : 1D vector of positions (size 3N)                                                                                                                    
   // vel        : 1D vector of velocities (size 3N)                                                                                            
@@ -34,15 +35,19 @@ void verlet:: Integration(int *N, int *nsteps, double *tstep, double *boxL, doub
 
   //Start counting steps
   int step = 0;
+
+  //Initialize temporary force arrays for each atomic coordinate                                                                                                                     
+  vector<double> f1(*N * 3, 0.0), f2(*N * 3, 0.0);
+
+  Forces forces;        //Forces class object, forces 
                                                                                                                                                                   
 do {
 
   //Initialize temporary force arrays for each atomic coordinate
-  vector<double> f1(*N * 3, 0.0), f2(*N * 3, 0.0);
-
-  Forces forces;        //Forces class object, forces
+  fill(f1.begin(),f1.end(),0.0); fill(f2.begin(),f2.end(),0.0);
 
   forces.LJ_seq(N,boxL,sig,eps,pos,&f1);      //Calculate force on all N atoms at t=tstep*step
+  forces.elc_seq(N,boxL,q,pos,&f1);
 
   //Loop over all atoms to update position
   for (int ctr=0; ctr < *N * 3; ctr+=3) {
@@ -50,8 +55,7 @@ do {
     //Write every ten steps to file
     if (step%10==0) {
       posfile << (*tstep)*step << " " << (*pos)[ctr] << " " << (*pos)[ctr+1] << " " << (*pos)[ctr+2] << "\n";
-      cout << " Following are the coordinates after " << (*tstep)*step << "femtoseconds" << endl;
-      cout << " x=" << (*pos)[ctr] << ", y=" << (*pos)[ctr+1] << ", z=" << (*pos)[ctr+2] << endl;
+      cout << "t =  " << (*tstep)*step << " ns, " << " x=" << (*pos)[ctr] << ", y=" << (*pos)[ctr+1] << ", z=" << (*pos)[ctr+2] << endl;
     }//End if statement for writing to file                                                                                                                                        
 
     //Update position of every atomic coordinate
@@ -67,8 +71,7 @@ do {
   }//End for loop over all particles
 
   forces.LJ_seq(N,boxL,sig,eps,pos,&f2);      //Calculate force on all N atoms after dt   
-
-  cout << "-------------------------------------------------------------" << endl;
+  forces.elc_seq(N,boxL,q,pos,&f2);
 
   //Loop over all atoms to update velocity 
   for (int ctr=0; ctr < *N * 3; ctr+=3) {
@@ -76,8 +79,7 @@ do {
     //Write every ten steps to file
     if (step%10==0) {
       velfile << (*tstep)*step << " " << (*vel)[ctr] << " " << (*vel)[ctr+1] << " " << (*vel)[ctr+2] << "\n";
-      cout << " Following are the velocities after " << (*tstep)*step << "femtoseconds" << endl;
-      cout << " vx=" << (*vel)[ctr] << ", vy=" << (*vel)[ctr+1] << ", vz=" << (*vel)[ctr+2] << endl;
+      cout << "t =  " << (*tstep)*step << " ns, " << " vx=" << (*vel)[ctr] << ", vy=" << (*vel)[ctr+1] << ", vz=" << (*vel)[ctr+2] << endl;
     }//End if statement for writing to file 
 
     //Update velocity of every atomic coordinate

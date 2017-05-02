@@ -2,7 +2,7 @@
 10		// box length (float, nm)
 298.0		// Temperature (float, K)
 1.0		// molecular mass (float, g/mol)
-0.000001	// time step (float, ns)
+0.000001		// time step (float, ns)
 100		// Number of time steps (int)
 3.3e-10		// LJ sigma (m)
 1.65e-21	// LJ epsilon (kg m^2/s^2)
