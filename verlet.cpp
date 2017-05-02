@@ -42,7 +42,7 @@ do {
 
   Forces forces;        //Forces class object, forces
 
-  forces.LJ_seq(N,boxL,sig,eps,pos,&f1);      //Calculate force on all N atoms at t=tstep*step
+  forces.LJ_seq_bound(N,boxL,sig,eps,pos,&f1);      //Calculate force on all N atoms at t=tstep*step
 
   //Loop over all atoms to update position
   for (int ctr=0; ctr < *N * 3; ctr+=3) {
@@ -66,7 +66,7 @@ do {
 
   }//End for loop over all particles
 
-  forces.LJ_seq(N,boxL,sig,eps,pos,&f2);      //Calculate force on all N atoms after dt   
+  forces.LJ_seq_bound(N,boxL,sig,eps,pos,&f2);      //Calculate force on all N atoms after dt   
 
   cout << "-------------------------------------------------------------" << endl;
 

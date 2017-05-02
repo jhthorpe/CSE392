@@ -59,6 +59,10 @@ int Parser::getInput(int *N, double *sl, double *T, double *m, double *ts, int *
   *q = *q * 1.9e-19;
   cout << "new charges : " << *q << endl;
 
+  cout << "fs -> ns " << endl;
+  *ts = *ts * 1e-6;
+  cout << "new times : " << *ts << endl;
+
 
   cout << "====================" << endl; 
    

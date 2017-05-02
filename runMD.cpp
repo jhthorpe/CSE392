@@ -89,14 +89,14 @@ int main()
   // Comments: make sure the directionality is being handled correctly... also add in boundary conditions 
   // This currently is NOT set up for boudnary conditions, the first particle is set at 0,0. Fix this.
 
-  vector<double> force(N*3, 0.0);
+//  vector<double> force(N*3, 0.0);
   
-  Forces forces;	//Forces class object, forces
+//  Forces forces;	//Forces class object, forces
 
-  forces.LJ_seq(&N,&sl,&sig,&eps,&pos,&force);
+//  forces.LJ_seq_bound(&N,&sl,&sig,&eps,&pos,&force);
   
   vector<double> q(N, chrg);
-  forces.elc_seq(&N,&sl,&q,&pos,&force);
+//  forces.elc_seq_bound(&N,&sl,&q,&pos,&force);
 
   // ~~~~~~~~~~			Start verlet		~~~~~~~~~~//
   // Comments:

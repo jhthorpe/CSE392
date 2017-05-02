@@ -15,6 +15,13 @@ class Forces
     //number of mol, box length, charges, position vector, forces vector 
     int elc_seq(int *,double *, vector<double> *, vector<double> *, vector<double> *);
 
+    //sequential LJ forces with periodic boundaries
+    //number of mol, box length, sigma param, epsilon param, position vector, forces vector 
+    int LJ_seq_bound(int *, double *, double *, double *, vector<double> * , vector<double> *);
+
+    //sequential coulombic intecactions
+    //number of mol, box length, charges, position vector, forces vector 
+    int elc_seq_bound(int *,double *, vector<double> *, vector<double> *, vector<double> *);
 };
 
 #endif
