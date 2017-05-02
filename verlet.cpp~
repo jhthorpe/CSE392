@@ -11,13 +11,12 @@ using namespace std;
 //For now, just for Lennard Jones force between gas of neutral atoms
 //Requires prior initialization of 1D vectors mass, position and velocity 
 
-void verlet:: verlet(int *N, int *nsteps, double *tstep, double *sl, double *boxL, double *sig, double *eps, vector<double> *m, vector<double> *pos, vector<double> *vel) {
+void verlet:: Integration(int *N, int *nsteps, double *tstep, double *boxL, double *sig, double *eps, vector<double> *m, vector<double> *pos, vector<double> *vel) {
 
   // Varaibles                                                                                                                                          
   // N          : number of molecules                                                                                                                                        
   // nsteps     : number of time steps for integration
   // tstep      : time step for integration
-  // sl         : side length of box                                                                                                    
   // boxL       : box length
   // sig        : sigma in Lennard Jones potential
   // eps        : epsilon in Lennard Jones potential
@@ -43,7 +42,7 @@ do {
 
   Forces forces;        //Forces class object, forces
 
-  forces.LJ_seq(&N,&sl,&sig,&eps,&pos,&f1);      //Calculate force on all N atoms at t=tstep*step
+  forces.LJ_seq(N,&boxL,&sig,&eps,&pos,&f1);      //Calculate force on all N atoms at t=tstep*step
 
   //Loop over all atoms to update position
   for (int ctr=0; ctr < *N * 3; ctr+=3) {
@@ -56,9 +55,9 @@ do {
     }//End if statement for writing to file                                                                                                                                        
 
     //Update position of every atomic coordinate
-    (*pos)[ctr] = (*pos)[ctr] + (*vel)[ctr]*(*tstep) + pow(*tstep,2)*f1[ctr]/(2 * *m[ctr/3]);
-    (*pos)[ctr+1] = (*pos)[ctr+1] + (*vel)[ctr+1]*(*tstep) + pow(*tstep,2)*f1[ctr+1]/(2 * *m[ctr/3]);
-    (*pos)[ctr+2] = (*pos)[ctr+2] + (*vel)[ctr+2]*(*tstep) + pow(*tstep,2)*f1[ctr+2]/(2 * *m[ctr/3]);
+    (*pos)[ctr] = (*pos)[ctr] + (*vel)[ctr]*(*tstep) + pow(*tstep,2)*f1[ctr]/(2 * (*m)[ctr/3]);
+    (*pos)[ctr+1] = (*pos)[ctr+1] + (*vel)[ctr+1]*(*tstep) + pow(*tstep,2)*f1[ctr+1]/(2 * (*m)[ctr/3]);
+    (*pos)[ctr+2] = (*pos)[ctr+2] + (*vel)[ctr+2]*(*tstep) + pow(*tstep,2)*f1[ctr+2]/(2 * (*m)[ctr/3]);
 
     //Correct for periodic boundaries                                                                                                                                              
     (*pos)[ctr]-= floor((*pos)[ctr]/(*boxL))*(*boxL);
@@ -67,12 +66,12 @@ do {
 
   }//End for loop over all particles
 
-  forces.LJ_seq(&N,&sl,&sig,&eps,&pos,&f2);      //Calculate force on all N atoms after dt   
+  forces.LJ_seq(&N,&boxL,&sig,&eps,&pos,&f2);      //Calculate force on all N atoms after dt   
 
   cout << "-------------------------------------------------------------" << endl;
 
   //Loop over all atoms to update velocity 
-  for (ctr=0; ctr < *N * 3; ctr+=3) {
+  for (int ctr=0; ctr < *N * 3; ctr+=3) {
 
     //Write every ten steps to file
     if (step%10==0) {
@@ -82,9 +81,9 @@ do {
     }//End if statement for writing to file 
 
     //Update velocity of every atomic coordinate
-    (*vel)[ctr] = (*vel)[ctr] + (*tstep)*(f1[ctr]+f2[ctr])/(2 * *m[ctr/3]);
-    (*vel)[ctr+1] = (*vel)[ctr+1] + (*tstep)*(f1[ctr+1]+f2[ctr+1])/(2 * *m[ctr/3]);
-    (*vel)[ctr+2] = (*vel)[ctr+2] + (*tstep)*(f1[ctr+2]+f2[ctr+2])/(2 * *m[ctr/3]);
+    (*vel)[ctr] = (*vel)[ctr] + (*tstep)*(f1[ctr]+f2[ctr])/(2 * (*m)[ctr/3]);
+    (*vel)[ctr+1] = (*vel)[ctr+1] + (*tstep)*(f1[ctr+1]+f2[ctr+1])/(2 * (*m)[ctr/3]);
+    (*vel)[ctr+2] = (*vel)[ctr+2] + (*tstep)*(f1[ctr+2]+f2[ctr+2])/(2 * (*m)[ctr/3]);
 
   }//End for loop over all particles                                                                                                                                               
 

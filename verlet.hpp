@@ -8,7 +8,7 @@ class verlet
 {
 public:
   // number of mol, number of time steps, box length, temp, mass, position vector, velocity vector                                                                                                       
-  void integration(int *, int *,double *, double *, vector<double> *, vector<double> *, vector<double> * );
+  void Integration(int *, int *, double *, double *, double *, double *, vector<double> *, vector<double> *, vector<double> *);
 };
 
 #endif
