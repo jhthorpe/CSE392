@@ -32,6 +32,9 @@ int main()
   // ts			: time step (double, ns)
   // ns			: number of time stimes (int)
   // m			: double of input mass (double, kg)
+  // kin                : total kinetic energy (double, kg-nm^2/ns^2)
+  // LJpot              : total lennard jones potential energy (double, kg-nm^2/ns^2)
+  // elcpot             : total electrostatic potential energy (double, kg-nm^2/ns^2)
   // mass		: 1D vector of mass (vector<doubles>) (kg/particle)  
   // pos		: 1D vector of positions, stored x(n),y(n+1),z(n+2) (vector<double>)
   // vel		: 1D vector of velocities, stored dx(n),dy(n+1),dz(n+2) (vector<double>, len/time)
@@ -41,7 +44,7 @@ int main()
   // Variables for the simulation
   int status=0,N=10,ns=100;
   int options [1]={0};		
-  double sl=10.0,T=298.15,ts=1.0,sig=1.0,eps=0.0,m=1.0,chrg=0.0;
+  double sl=10.0,T=298.15,ts=1.0,sig=1.0,eps=0.0,m=1.0,chrg=0.0,kin=0.0,LJpot=0.0,elcpot=0.0;
 
   // Internal variables
   int i,j,k;
@@ -99,11 +102,17 @@ int main()
 //  forces.elc_seq_bound(&N,&sl,&q,&pos,&force);
 
   // ~~~~~~~~~~			Start verlet		~~~~~~~~~~//
-  // Comments:
+  // Comments: sequential velocity verlet integration. integrates position and velocity with periodic boundary conditions
 
   verlet v;           //verlet class object, v
 
-  v.Integration(&N,&ns,&ts,&sl,&sig,&eps,&mass,&pos,&vel);
+  v.Integration(&N,&ns,&ts,&sl,&sig,&eps,&q,&mass,&pos,&vel);
+
+  //energy e;          //energy class object, e
+
+  //e.kinetic_seq(&N,&mass,&vel,&kin,&T);
+  //e.LJpot_seq(&N,&sl,&sig,&eps,&pos,&LJpot);
+  //e.elcpot_seq(&N,&q,&pos,&elcpot);
 
   //Last line
   cout << endl << "Exiting runMD with status :" << status << endl;

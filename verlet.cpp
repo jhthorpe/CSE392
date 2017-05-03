@@ -5,44 +5,62 @@
 //Developer defined header files
 #include "verlet.hpp"
 #include "forces.hpp"
+#include "energy.hpp"
 using namespace std;
 
 //Integrates position and velocity based on velocity verlet scheme
-//For now, just for Lennard Jones force between gas of neutral atoms
+//For now, just for Lennard Jones and electrostatic forces between gas of atoms
 //Requires prior initialization of 1D vectors mass, position and velocity 
 
-void verlet:: Integration(int *N, int *nsteps, double *tstep, double *boxL, double *sig, double *eps, vector<double> *m, vector<double> *pos, vector<double> *vel) {
+void verlet:: Integration(int *N, int *nsteps, double *tstep, double *sl, double *sig, double *eps, vector<double> *q, vector<double> *m, vector<double> *pos, vector<double> *vel) {
 
   // Varaibles                                                                                                                                          
   // N          : number of molecules                                                                                                                                        
   // nsteps     : number of time steps for integration
   // tstep      : time step for integration
-  // boxL       : box length
+  // sl         : box length
   // sig        : sigma in Lennard Jones potential
   // eps        : epsilon in Lennard Jones potential
+  // q          : charge on each atom (N)
   // m          : 1D vector of mass (size N)                                                                                                                                 
   // pos        : 1D vector of positions (size 3N)                                                                                                                    
   // vel        : 1D vector of velocities (size 3N)                                                                                            
 
   //Open files for storing position and velocity
-  ofstream posfile, velfile;
-  posfile.open("traj_pos.txt"); velfile.open("traj_vel.txt");
+  ofstream posfile, velfile, kefile, pefile;
+  posfile.open("traj_pos.txt"); velfile.open("traj_vel.txt"); kefile.open("traj_kenergy.txt"); pefile.open("traj_penergy.txt");
 
-  posfile << "Time xpos ypos zpos\n"; velfile << "Time xvel yvel zvel\n"; 
+  posfile << "Time xpos ypos zpos\n"; velfile << "Time xvel yvel zvel\n"; kefile << "Time T kin\n"; pefile << "Time LJpot elcpot\n";
 
   cout << "-------------Starting Verlet Integration-----------------" << endl;
 
   //Start counting steps
   int step = 0;
-                                                                                                                                                                  
+
+  //Internal variables
+
+  vector<double> f1(*N * 3), f2(*N * 3);   //Initialize temporary force arrays for each atomic coordinate   
+  Forces forces;                           //Forces class object, forces 
+  energy e;                                //energy class object, e
+  double kin, LJpot, elcpot, T;            //Declare energy variables
+
 do {
+  fill(f1.begin(),f1.end(),0.0); fill(f2.begin(),f2.end(),0.0);  //Initialize temporary force variables f1 and f2
+  kin=0.0, LJpot=0.0, elcpot=0.0, T=0.0;                         //Re-initialize energy variables everytime
 
-  //Initialize temporary force arrays for each atomic coordinate
-  vector<double> f1(*N * 3, 0.0), f2(*N * 3, 0.0);
+  forces.LJ_seq_bound(N,sl,sig,eps,pos,&f1);      //Calculate LJ force on all N atoms at t=tstep*step
+  forces.elc_seq_bound(N,sl,q,pos,&f1);           //Calculate elc force on all N atoms at t=tstep*step
 
-  Forces forces;        //Forces class object, forces
+  //Write energies to file every ten steps
+  if (step%10==0) {
 
-  forces.LJ_seq_bound(N,boxL,sig,eps,pos,&f1);      //Calculate force on all N atoms at t=tstep*step
+    e.LJpot_seq(N,sl,sig,eps,pos,&LJpot);     //Calculate total lennard jones potential energy of system at t=tstep*step                                                           
+    e.elcpot_seq(N,q,pos,&elcpot);            //Calculate total electrostatic potential energy of system at t=tstep*step                                                           
+    e.kinetic_seq(N,m,vel,&kin,&T);           //Calculate total kinetic energy and temperature of system at t=tstep*step 
+
+    pefile << (*tstep)*step << " " << LJpot << " " << elcpot << "\n";  
+    kefile << (*tstep)*step << " " << T << " " << kin << "\n";
+  }
 
   //Loop over all atoms to update position
   for (int ctr=0; ctr < *N * 3; ctr+=3) {
@@ -50,8 +68,7 @@ do {
     //Write every ten steps to file
     if (step%10==0) {
       posfile << (*tstep)*step << " " << (*pos)[ctr] << " " << (*pos)[ctr+1] << " " << (*pos)[ctr+2] << "\n";
-      cout << " Following are the coordinates after " << (*tstep)*step << "femtoseconds" << endl;
-      cout << " x=" << (*pos)[ctr] << ", y=" << (*pos)[ctr+1] << ", z=" << (*pos)[ctr+2] << endl;
+      cout << "t = " << (*tstep)*step*1000 << " ps" << ", Atom number " << ctr/3 << ": x=" << (*pos)[ctr] << ", y=" << (*pos)[ctr+1] << ", z=" << (*pos)[ctr+2] << endl;
     }//End if statement for writing to file                                                                                                                                        
 
     //Update position of every atomic coordinate
@@ -60,15 +77,14 @@ do {
     (*pos)[ctr+2] = (*pos)[ctr+2] + (*vel)[ctr+2]*(*tstep) + pow(*tstep,2)*f1[ctr+2]/(2 * (*m)[ctr/3]);
 
     //Correct for periodic boundaries                                                                                                                                              
-    (*pos)[ctr]-= floor((*pos)[ctr]/(*boxL))*(*boxL);
-    (*pos)[ctr+1]-= floor((*pos)[ctr+1]/(*boxL))*(*boxL);
-    (*pos)[ctr+2]-= floor((*pos)[ctr+2]/(*boxL))*(*boxL);
+    (*pos)[ctr]-= floor((*pos)[ctr]/(*sl))*(*sl);
+    (*pos)[ctr+1]-= floor((*pos)[ctr+1]/(*sl))*(*sl);
+    (*pos)[ctr+2]-= floor((*pos)[ctr+2]/(*sl))*(*sl);
 
   }//End for loop over all particles
 
-  forces.LJ_seq_bound(N,boxL,sig,eps,pos,&f2);      //Calculate force on all N atoms after dt   
-
-  cout << "-------------------------------------------------------------" << endl;
+  forces.LJ_seq_bound(N,sl,sig,eps,pos,&f2);      //Calculate LJ force on all N atoms after dt   
+  forces.elc_seq_bound(N,sl,q,pos,&f2);           //Calculate elc force on all N atoms after dt
 
   //Loop over all atoms to update velocity 
   for (int ctr=0; ctr < *N * 3; ctr+=3) {
@@ -76,8 +92,7 @@ do {
     //Write every ten steps to file
     if (step%10==0) {
       velfile << (*tstep)*step << " " << (*vel)[ctr] << " " << (*vel)[ctr+1] << " " << (*vel)[ctr+2] << "\n";
-      cout << " Following are the velocities after " << (*tstep)*step << "femtoseconds" << endl;
-      cout << " vx=" << (*vel)[ctr] << ", vy=" << (*vel)[ctr+1] << ", vz=" << (*vel)[ctr+2] << endl;
+      cout << "t = " << (*tstep)*step*1000 << " ps" << ", Atom number " << ctr/3 << ": vx=" << (*vel)[ctr] << ", vy=" << (*vel)[ctr+1] << ", vz=" << (*vel)[ctr+2] << endl;
     }//End if statement for writing to file 
 
     //Update velocity of every atomic coordinate
@@ -92,7 +107,9 @@ do {
 
  } while(step < *nsteps);//End do-while loop after nsteps                                                                                                                          
 
+ cout << "----------Dynamics Ended----------------" << endl;
+
 //Close file streams                                                                                                                                                            
- posfile.close(); velfile.close();
+ posfile.close(); velfile.close(); kefile.close(); pefile.close();
 
 }
