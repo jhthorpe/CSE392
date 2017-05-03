@@ -25,8 +25,8 @@ int energy::kinetic_seq(int *N, vector<double> *mass, vector<double> *vel, doubl
   double kB = 1.38064852e-23; 
 
   //internal variables                                                                                                                                                  
-  int i
-    vector<double> kinetic(*N,0.0);
+  int i;
+  vector<double> kinetic(*N,0.0);
 
   for (i=0; i < *N; i++)
     {
@@ -63,15 +63,27 @@ int energy::LJpot_seq(int *N, double *sl, double *sig, double *eps, vector<doubl
 	  rz=((*pos)[3*j+2]-(*pos)[3*i+2]);
 	  r=pow(pow(rx,2)+pow(ry,2)+pow(rz,2),0.5);
 
-	  //Need to add periodic boundary conditions here
-
 	  *LJpot += (4e0 * *eps / *sig) * (pow(*sig/r,12) - pow(*sig/r,6) );
 	};
     };
   return 0;
 }
 
-int energy::elec_seq(int *N, double *q) 
+int energy::elec_seq(int *N, vector<double> *q, vector<double> *pos, double *elec) 
 {
+  //Variables
+
+  // N          : number of atoms
+
+  // q          : 1D vector of charges (size N)
+
+  // pos        : 1D vector of particle positions (size 3N)                                                                                                       
+
+  // elec      : Total electrostatic  potential energy
+
+  //Permittivity
+  double ke = 8.89755e18;       //in kg nm^3 / ns^2 C^2 
+
+
   return 0;
 }
