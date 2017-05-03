@@ -27,7 +27,7 @@ int energy::kinetic_seq(int *N, vector<double> *mass, vector<double> *vel, doubl
 
   for (i=0; i < *N; i++)
     {
-      *kin += pow( (1/2) * ((*mass)[i]) * ( pow((*vel)[3*i],2) + pow((*vel)[3*i+1],2) + pow((*vel)[3*i+2],2) ) , 0.5 ) ;
+      *kin += pow( 0.5 * ((*mass)[i]) * ( pow((*vel)[3*i],2) + pow((*vel)[3*i+1],2) + pow((*vel)[3*i+2],2) ) , 0.5 ) ;
     }
 
   *temp = *kin/(*N*kB);

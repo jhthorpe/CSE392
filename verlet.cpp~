@@ -51,22 +51,22 @@ do {
   forces.LJ_seq_bound(N,sl,sig,eps,pos,&f1);      //Calculate LJ force on all N atoms at t=tstep*step
   forces.elc_seq_bound(N,sl,q,pos,&f1);           //Calculate elc force on all N atoms at t=tstep*step
 
-  //Write energies to file every ten steps
-  if (step%10==0) {
+  //Write energies to file every hundred steps
+  if (step%100==0) {
 
     e.LJpot_seq(N,sl,sig,eps,pos,&LJpot);     //Calculate total lennard jones potential energy of system at t=tstep*step                                                           
     e.elcpot_seq(N,q,pos,&elcpot);            //Calculate total electrostatic potential energy of system at t=tstep*step                                                           
     e.kinetic_seq(N,m,vel,&kin,&T);           //Calculate total kinetic energy and temperature of system at t=tstep*step 
 
-    pefile << (*tstep)*step << " " << LJpot << " " <<elcpot << "\n";  
+    pefile << (*tstep)*step << " " << LJpot << " " << elcpot << "\n";  
     kefile << (*tstep)*step << " " << T << " " << kin << "\n";
   }
 
   //Loop over all atoms to update position
   for (int ctr=0; ctr < *N * 3; ctr+=3) {
 
-    //Write every ten steps to file
-    if (step%10==0) {
+    //Write every hundred steps to file
+    if (step%100==0) {
       posfile << (*tstep)*step << " " << (*pos)[ctr] << " " << (*pos)[ctr+1] << " " << (*pos)[ctr+2] << "\n";
       cout << "t = " << (*tstep)*step*1000 << " ps" << ", Atom number " << ctr/3 << ": x=" << (*pos)[ctr] << ", y=" << (*pos)[ctr+1] << ", z=" << (*pos)[ctr+2] << endl;
     }//End if statement for writing to file                                                                                                                                        
@@ -89,8 +89,8 @@ do {
   //Loop over all atoms to update velocity 
   for (int ctr=0; ctr < *N * 3; ctr+=3) {
 
-    //Write every ten steps to file
-    if (step%10==0) {
+    //Write every hundred steps to file
+    if (step%100==0) {
       velfile << (*tstep)*step << " " << (*vel)[ctr] << " " << (*vel)[ctr+1] << " " << (*vel)[ctr+2] << "\n";
       cout << "t = " << (*tstep)*step*1000 << " ps" << ", Atom number " << ctr/3 << ": vx=" << (*vel)[ctr] << ", vy=" << (*vel)[ctr+1] << ", vz=" << (*vel)[ctr+2] << endl;
     }//End if statement for writing to file 

@@ -27,10 +27,14 @@ int energy::kinetic_seq(int *N, vector<double> *mass, vector<double> *vel, doubl
 
   for (i=0; i < *N; i++)
     {
-      *kin += pow( (1/2) * ((*mass)[i]) * ( pow((*vel)[3*i],2) + pow((*vel)[3*i+1],2) + pow((*vel)[3*i+2],2) ) , 0.5 ) ;
+      *kin += pow( 0.5 * ((*mass)[i]) * ( pow((*vel)[3*i],2) + pow((*vel)[3*i+1],2) + pow((*vel)[3*i+2],2) ) , 0.5 ) ;
+      cout << "pow(vel[3i],2): " << (0.5)*((*mass)[i])*(pow((*vel)[3*i],2)+pow((*vel)[3*i+1],2)+pow((*vel)[3*i+2],2)) << endl;
     }
 
   *temp = *kin/(*N*kB);
+
+  //test                                                                                
+  cout << "Value of kin after function kinetic_seq() call... "<< *kin << endl;
 
   return 0;
 }
@@ -88,7 +92,7 @@ int energy::elcpot_seq(int *N, vector<double> *q, vector<double> *pos, double *e
           rz=((*pos)[3*j+2]-(*pos)[3*i+2]);
           r=pow(pow(rx,2)+pow(ry,2)+pow(rz,2),0.5);
 
-	  *elec += ke * (*q)[i]*(*q)[j]/r;
+	  *elcpot += ke * (*q)[i]*(*q)[j]/r;
         };
     };
   return 0;
