@@ -1,0 +1,75 @@
+// Energy evaluations                                                                                                                                                           
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <cmath>
+#include <math.h>
+#include "energy.hpp"
+using namespace std;
+
+
+//Evaluate kinetic energy of all atoms
+
+int energy::kinetic_seq(int *N, vector<double> *mass, vector<double> *vel, vector<double> *kinetic, double *temp)
+{
+  //Variables                                                                                                                                                                        
+  // N          : number of input molecules                                                                                                                                          
+  // sl         : side length of box (nm)                         
+
+  // mass       : 1D vector of masses of particles (size N)
+                                                                                                                   
+  // vel        : 1D vector of particle velocities (size 3N)                                                                                                                                                  
+  // kinetic    : 1D vector of kinetic energy (size N)                                                                                                                                       
+  // temp       : Temperature in (degrees Kelvin)
+
+  double kB = 1.38064852e-23; 
+
+  //internal variables                                                                                                                                                  
+  int i
+
+  for (i=0; i < *N; i++)
+    {
+      (*kinetic)[i] = pow( (1/2) * (*mass[i]) * ( pow(*vel[3*i],2) + pow(*vel[3*i+1],2) + pow(*vel[3*i+2],2) ) , 0.5 ) ;
+    }
+
+  temp = average(*kinetic)/kB;
+
+  return 0;
+}
+
+int energy::LJpot_seq(int *N, double *sl, double *sig, double *eps, vector<double> *pos, vector<double> *LJpot)
+{
+  //Variables                                                                                                                                                                                                                                                                                                                                                         
+  // N          : number of input molecules                                                                                                                          
+                                                                                                                                                                                   
+  // sl         : side length of box (nm)                                                                                                                                            
+  // sig        : sigma in LJ potential
+
+  // eps        : epsilon in LJ potential
+
+  // pos        : 1D vector of particle positions (size 3N)                                                                                                                 
+                                                                                                                                                                                    
+  // LJpot      : 1D vector of LJ potential energy (size N)                                                                                                                                                                                                                                                                                       
+  double lj, r,rx,ry,rz;
+
+  for (i=0; i < *N; i++)
+    {
+      for (j=i+1; j < *N; j++)
+	{
+	  rx=((*pos)[3*j]-(*pos)[3*i]);
+	  ry=((*pos)[3*j+1]-(*pos)[3*i+1]);
+	  rz=((*pos)[3*j+2]-(*pos)[3*i+2]);
+	  r=pow(pow(rx,2)+pow(ry,2)+pow(rz,2),0.5);
+
+	  lj = (24e0 * *eps / *sig) * (2e0 * pow(*sig/r,13) - pow(*sig/r,7) );
+
+	  (*force)[3*i] -= f * (rx/r);
+	  (*force)[3*j] += f * (rx/r);
+	  (*force)[3*i+1] -= f * (ry/r);
+	  (*force)[3*j+1] += f * (ry/r);
+	  (*force)[3*i+2] -= f * (rz/r);
+	  (*force)[3*j+2] += f * (rz/r);
+	};
+    };
+
+
