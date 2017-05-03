@@ -20,17 +20,17 @@ int energy::kinetic_seq(int *N, vector<double> *mass, vector<double> *vel, doubl
   // kin        : Total kinetic energy (kg nm^2/ns^2)
   // temp       : Temperature in (degrees Kelvin)
 
-  double kB = 1.38064852e-23;     //Boltzmann constant
+  double kB = 1.38064852e-23;     //Boltzmann constant (kg-nm^2/ns^2-K)
 
   //internal variables                                                                                                                                                  
   int i;
 
   for (i=0; i < *N; i++)
     {
-      *kin += pow( 0.5 * ((*mass)[i]) * ( pow((*vel)[3*i],2) + pow((*vel)[3*i+1],2) + pow((*vel)[3*i+2],2) ) , 0.5 ) ;
+      *kin += 0.5 * ((*mass)[i]) * ( pow((*vel)[3*i],2) + pow((*vel)[3*i+1],2) + pow((*vel)[3*i+2],2) ) ;
     }
 
-  *temp = *kin/(*N*kB);
+  *temp = (2.0/3.0) * (*kin)/(*N*kB);
 
   return 0;
 }

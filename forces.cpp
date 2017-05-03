@@ -131,24 +131,24 @@ int Forces::LJ_seq_bound(int *N, double *sl, double *sig, double *eps, vector<do
   
       if (rx >= *sl/2.0){
         rx=((*pos)[3*j]-*sl-(*pos)[3*i]);
-        cout << "x - reflection" << endl; 
+	//  cout << "x - reflection" << endl; 
       } else if (rx <= *sl/-2.0){
         rx=((*pos)[3*j]+*sl-(*pos)[3*i]);
-        cout << "x + reflection" << endl; 
+	//  cout << "x + reflection" << endl; 
       }
       if (ry >= *sl/2.0){
         ry=((*pos)[3*j+1]-*sl-(*pos)[3*i+1]);
-        cout << "y - reflection" << endl; 
+	//  cout << "y - reflection" << endl; 
       } else if (ry <= *sl/-2.0){
         ry=((*pos)[3*j+1]+*sl-(*pos)[3*i+1]);
-        cout << "y + reflection" << endl; 
+	//  cout << "y + reflection" << endl; 
       }
       if (rz >= *sl/2.0){
         rz=((*pos)[3*j+2]-*sl-(*pos)[3*i+2]);
-        cout << "z - reflection" << endl; 
+	//  cout << "z - reflection" << endl; 
       } else if (rz <= *sl/-2.0){
         rz=((*pos)[3*j+2]+*sl-(*pos)[3*i+2]);
-        cout << "z + reflection" << endl; 
+	//  cout << "z + reflection" << endl; 
       }
      
       //cout << "interaction " << i << "," << j << endl;
@@ -213,24 +213,24 @@ int Forces::elc_seq_bound(int *N, double *sl, vector<double> *q, vector<double> 
   
       if (rx >= *sl/2.0){
         rx=((*pos)[3*j]-*sl-(*pos)[3*i]);
-        cout << "x - reflection" << endl; 
+	//  cout << "x - reflection" << endl; 
       } else if (rx <= *sl/-2.0){
         rx=((*pos)[3*j]+*sl-(*pos)[3*i]);
-        cout << "x + reflection" << endl; 
+	//  cout << "x + reflection" << endl; 
       }
       if (ry >= *sl/2.0){
         ry=((*pos)[3*j+1]-*sl-(*pos)[3*i+1]);
-        cout << "y - reflection" << endl; 
+	//  cout << "y - reflection" << endl; 
       } else if (ry <= *sl/-2.0){
         ry=((*pos)[3*j+1]+*sl-(*pos)[3*i+1]);
-        cout << "y + reflection" << endl; 
+	//   cout << "y + reflection" << endl; 
       }
       if (rz >= *sl/2.0){
         rz=((*pos)[3*j+2]-*sl-(*pos)[3*i+2]);
-        cout << "z - reflection" << endl; 
+	//        cout << "z - reflection" << endl; 
       } else if (rz <= *sl/-2.0){
         rz=((*pos)[3*j+2]+*sl-(*pos)[3*i+2]);
-        cout << "z + reflection" << endl; 
+        //cout << "z + reflection" << endl; 
       }
      
      // cout << "interaction " << i << "," << j << endl;
