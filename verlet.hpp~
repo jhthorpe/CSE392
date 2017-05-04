@@ -7,8 +7,8 @@ using namespace std;
 class verlet
 {
 public:
-  // number of mol, number of time steps, box length, temp, mass, position vector, velocity vector                                                                                                       
-  void Integration(int *, int *, double *, double *, double *, double *, vector<double> *, vector<double> *, vector<double> *);
+  // number of mol, number of time steps, time step, side length, sigma, epsilon, charge vector, mass vector, position vector, velocity vector                                                                                                       
+  void Integration(int *, int *, double *, double *, double *, double *, vector<double> *, vector<double> *, vector<double> *, vector<double> *);
 };
 
 #endif

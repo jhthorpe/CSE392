@@ -17,6 +17,7 @@ void verlet:: Integration(int *N, int *nsteps, double *tstep, double *sl, double
   // Varaibles                                                                                                                                          
   // N          : number of molecules                                                                                                                                        
   // nsteps     : number of time steps for integration
+  // showsteps  : number of time steps for output display
   // tstep      : time step for integration
   // sl         : box length
   // sig        : sigma in Lennard Jones potential
@@ -30,7 +31,8 @@ void verlet:: Integration(int *N, int *nsteps, double *tstep, double *sl, double
   ofstream posfile, velfile, kefile, pefile;
   posfile.open("traj_pos.txt"); velfile.open("traj_vel.txt"); kefile.open("traj_kenergy.txt"); pefile.open("traj_penergy.txt");
 
-  posfile << "Time xpos ypos zpos\n"; velfile << "Time xvel yvel zvel\n"; kefile << "Time T kin\n"; pefile << "Time LJpot elcpot\n";
+  posfile << "Time(ns) Atom xpos(nm) ypos(nm) zpos(nm)\n"; velfile << "Time(ns) Atom xvel(nm/ns) yvel(nm/ns) zvel(nm/ns)\n"; 
+  kefile << "Time(ns) T(K) kin(kg-nm^2/ns^2)\n"; pefile << "Time(ns) LJpot(kg-nm^2/ns^2) elcpot(kg-nm^2/ns^2)\n";
 
   cout << "-------------Starting Verlet Integration-----------------" << endl;
 
@@ -38,7 +40,7 @@ void verlet:: Integration(int *N, int *nsteps, double *tstep, double *sl, double
   int step = 0;
 
   //Internal variables
-
+  int showsteps=1000;
   vector<double> f1(*N * 3), f2(*N * 3);   //Initialize temporary force arrays for each atomic coordinate   
   Forces forces;                           //Forces class object, forces 
   energy e;                                //energy class object, e
@@ -51,8 +53,8 @@ do {
   forces.LJ_seq_bound(N,sl,sig,eps,pos,&f1);      //Calculate LJ force on all N atoms at t=tstep*step
   forces.elc_seq_bound(N,sl,q,pos,&f1);           //Calculate elc force on all N atoms at t=tstep*step
 
-  //Write energies to file every hundred steps
-  if (step%100==0) {
+  //Write energies to file every showsteps steps
+  if (step%showsteps==0) {
 
     e.LJpot_seq(N,sl,sig,eps,pos,&LJpot);     //Calculate total lennard jones potential energy of system at t=tstep*step                                                           
     e.elcpot_seq(N,q,pos,&elcpot);            //Calculate total electrostatic potential energy of system at t=tstep*step                                                           
@@ -65,9 +67,9 @@ do {
   //Loop over all atoms to update position
   for (int ctr=0; ctr < *N * 3; ctr+=3) {
 
-    //Write every hundred steps to file
-    if (step%100==0) {
-      posfile << (*tstep)*step << " " << (*pos)[ctr] << " " << (*pos)[ctr+1] << " " << (*pos)[ctr+2] << "\n";
+    //Write every showsteps steps to file
+    if (step%showsteps==0) {
+      posfile << (*tstep)*step << " " << ctr/3 << " " << (*pos)[ctr] << " " << (*pos)[ctr+1] << " " << (*pos)[ctr+2] << "\n";
       cout << "t = " << (*tstep)*step*1000 << " ps" << ", Atom number " << ctr/3 << ": x=" << (*pos)[ctr] << ", y=" << (*pos)[ctr+1] << ", z=" << (*pos)[ctr+2] << endl;
     }//End if statement for writing to file                                                                                                                                        
 
@@ -89,9 +91,9 @@ do {
   //Loop over all atoms to update velocity 
   for (int ctr=0; ctr < *N * 3; ctr+=3) {
 
-    //Write every hundred steps to file
-    if (step%100==0) {
-      velfile << (*tstep)*step << " " << (*vel)[ctr] << " " << (*vel)[ctr+1] << " " << (*vel)[ctr+2] << "\n";
+    //Write every showsteps steps to file
+    if (step%showsteps==0) {
+      velfile << (*tstep)*step << " " << ctr/3 << " " << (*vel)[ctr] << " " << (*vel)[ctr+1] << " " << (*vel)[ctr+2] << "\n";
       cout << "t = " << (*tstep)*step*1000 << " ps" << ", Atom number " << ctr/3 << ": vx=" << (*vel)[ctr] << ", vy=" << (*vel)[ctr+1] << ", vz=" << (*vel)[ctr+2] << endl;
     }//End if statement for writing to file 
 

@@ -31,6 +31,7 @@ int main()
   // T			: temperature (double, K)
   // ts			: time step (double, ns)
   // ns			: number of time stimes (int)
+  // ss                 : number of time steps to display or write (int)
   // m			: double of input mass (double, kg)
   // kin                : total kinetic energy (double, kg-nm^2/ns^2)
   // LJpot              : total lennard jones potential energy (double, kg-nm^2/ns^2)
@@ -42,7 +43,7 @@ int main()
   // options 		: 1D int array, stores extra options the user inputs
   
   // Variables for the simulation
-  int status=0,N=10,ns=100;
+  int status=0,N=10,ns=100,ss=10;
   int options [1]={0};		
   double sl=10.0,T=298.15,ts=1.0,sig=1.0,eps=0.0,m=1.0,chrg=0.0,kin=0.0,LJpot=0.0,elcpot=0.0;
 
@@ -62,7 +63,7 @@ int main()
   // Comments: May want to test that the types are correct - Mar 28, 2017
 
   Parser parser;	//this creates our "Parser" class object, "parser"
-  status = parser.getInput(&N, &sl, &T, &m, &ts, &ns, &sig, &eps, &chrg, options);
+  status = parser.getInput(&N, &sl, &T, &m, &ts, &ns, &ss, &sig, &eps, &chrg, options);
   if (status != 0)
   {
     killer.kill(status);
@@ -106,7 +107,7 @@ int main()
 
   verlet v;           //verlet class object, v
 
-  v.Integration(&N,&ns,&ts,&sl,&sig,&eps,&q,&mass,&pos,&vel);
+  v.Integration(&N,&ns,&ss,&ts,&sl,&sig,&eps,&q,&mass,&pos,&vel);
 
   //energy e;          //energy class object, e
 

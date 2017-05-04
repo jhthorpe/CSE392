@@ -31,6 +31,7 @@ int main()
   // T			: temperature (double, K)
   // ts			: time step (double, ns)
   // ns			: number of time stimes (int)
+  // ss                 : number of time steps to display or write (int)
   // m			: double of input mass (double, kg)
   // kin                : total kinetic energy (double, kg-nm^2/ns^2)
   // LJpot              : total lennard jones potential energy (double, kg-nm^2/ns^2)
@@ -62,7 +63,7 @@ int main()
   // Comments: May want to test that the types are correct - Mar 28, 2017
 
   Parser parser;	//this creates our "Parser" class object, "parser"
-  status = parser.getInput(&N, &sl, &T, &m, &ts, &ns, &sig, &eps, &chrg, options);
+  status = parser.getInput(&N, &sl, &T, &m, &ts, &ns, &ss, &sig, &eps, &chrg, options);
   if (status != 0)
   {
     killer.kill(status);
@@ -106,13 +107,13 @@ int main()
 
   verlet v;           //verlet class object, v
 
-  v.Integration(&N,&ns,&ts,&sl,&sig,&eps,&q,&mass,&pos,&vel);
+  v.Integration(&N,&ns,&ss,&ts,&sl,&sig,&eps,&q,&mass,&pos,&vel);
 
-  energy e;          //energy class object, e
+  //energy e;          //energy class object, e
 
-  e.kinetic_seq(&N,&mass,&vel,&kin,&T);
-  e.LJpot_seq(&N,&sl,&sig,&eps,&pos,&LJpot);
-  e.;
+  //e.kinetic_seq(&N,&mass,&vel,&kin,&T);
+  //e.LJpot_seq(&N,&sl,&sig,&eps,&pos,&LJpot);
+  //e.elcpot_seq(&N,&q,&pos,&elcpot);
 
   //Last line
   cout << endl << "Exiting runMD with status :" << status << endl;

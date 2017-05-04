@@ -4,7 +4,7 @@
 #include "parser.hpp"
 using namespace std;
 
-int Parser::getInput(int *N, double *sl, double *T, double *m, double *ts, int *ns, int *ss, double *sig, double *eps, double *q, int options[])
+int Parser::getInput(int *N, double *sl, double *T, double *m, double *ts, int *ns, double *sig, double *eps, double *q, int options[])
 {
   int i;
 
@@ -26,7 +26,7 @@ int Parser::getInput(int *N, double *sl, double *T, double *m, double *ts, int *
   else
   {
     // Get initial values
-    inFile >> *N >> *sl >> *T >> *m >> *ts >> *ns >> *ss >> *sig >> *eps >> *q; 
+    inFile >> *N >> *sl >> *T >> *m >> *ts >> *ns >> *sig >> *eps >> *q; 
   }
 
   // Close input.dat  
@@ -40,7 +40,6 @@ int Parser::getInput(int *N, double *sl, double *T, double *m, double *ts, int *
   cout << "Molecule mass (g/mol) : " << *m << endl; 
   cout << "Time Step (fs) : " << *ts << endl; 
   cout << "Number of Steps : " << *ns << endl; 
-  cout << "Numner of steps to display : " << *ss << endl;
   cout << "LJ sigma (m) : " << *sig << endl;
   cout << "LJ epsilon (J) : " << *eps << endl;
   cout << "Charges : " << *q << endl;

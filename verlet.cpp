@@ -12,7 +12,7 @@ using namespace std;
 //For now, just for Lennard Jones and electrostatic forces between gas of atoms
 //Requires prior initialization of 1D vectors mass, position and velocity 
 
-void verlet:: Integration(int *N, int *nsteps, double *tstep, double *sl, double *sig, double *eps, vector<double> *q, vector<double> *m, vector<double> *pos, vector<double> *vel) {
+void verlet:: Integration(int *N, int *nsteps, int *showsteps, double *tstep, double *sl, double *sig, double *eps, vector<double> *q, vector<double> *m, vector<double> *pos, vector<double> *vel) {
 
   // Varaibles                                                                                                                                          
   // N          : number of molecules                                                                                                                                        
@@ -40,7 +40,6 @@ void verlet:: Integration(int *N, int *nsteps, double *tstep, double *sl, double
   int step = 0;
 
   //Internal variables
-  int showsteps=1000;
   vector<double> f1(*N * 3), f2(*N * 3);   //Initialize temporary force arrays for each atomic coordinate   
   Forces forces;                           //Forces class object, forces 
   energy e;                                //energy class object, e
@@ -54,7 +53,7 @@ do {
   forces.elc_seq_bound(N,sl,q,pos,&f1);           //Calculate elc force on all N atoms at t=tstep*step
 
   //Write energies to file every showsteps steps
-  if (step%showsteps==0) {
+  if (step%(*showsteps)==0) {
 
     e.LJpot_seq(N,sl,sig,eps,pos,&LJpot);     //Calculate total lennard jones potential energy of system at t=tstep*step                                                           
     e.elcpot_seq(N,q,pos,&elcpot);            //Calculate total electrostatic potential energy of system at t=tstep*step                                                           
@@ -68,7 +67,7 @@ do {
   for (int ctr=0; ctr < *N * 3; ctr+=3) {
 
     //Write every showsteps steps to file
-    if (step%showsteps==0) {
+    if (step%(*showsteps)==0) {
       posfile << (*tstep)*step << " " << ctr/3 << " " << (*pos)[ctr] << " " << (*pos)[ctr+1] << " " << (*pos)[ctr+2] << "\n";
       cout << "t = " << (*tstep)*step*1000 << " ps" << ", Atom number " << ctr/3 << ": x=" << (*pos)[ctr] << ", y=" << (*pos)[ctr+1] << ", z=" << (*pos)[ctr+2] << endl;
     }//End if statement for writing to file                                                                                                                                        
@@ -92,7 +91,7 @@ do {
   for (int ctr=0; ctr < *N * 3; ctr+=3) {
 
     //Write every showsteps steps to file
-    if (step%showsteps==0) {
+    if (step%(*showsteps)==0) {
       velfile << (*tstep)*step << " " << ctr/3 << " " << (*vel)[ctr] << " " << (*vel)[ctr+1] << " " << (*vel)[ctr+2] << "\n";
       cout << "t = " << (*tstep)*step*1000 << " ps" << ", Atom number " << ctr/3 << ": vx=" << (*vel)[ctr] << ", vy=" << (*vel)[ctr+1] << ", vz=" << (*vel)[ctr+2] << endl;
     }//End if statement for writing to file 
