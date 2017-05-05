@@ -1,6 +1,7 @@
 // Program to parser input from MD.dat
 #include <iostream>
 #include <fstream>
+#include <cmath>
 #include "parser.hpp"
 using namespace std;
 
@@ -64,7 +65,13 @@ int Parser::getInput(int *N, double *sl, double *T, double *m, double *ts, int *
   *ts = *ts * 1e-6;
   cout << "new times : " << *ts << endl;
 
-
+  //Normalizing to side length
+  cout << "Normalizing to side length. Following values will be changed:\n";
+  *sig = *sig / *sl; 
+  *eps = *eps / pow(*sl,2);
+  cout << "LJ sigma, LJ epsilon, ke, position, velocity, force, energy ..." << endl; 
+  
+  
   cout << "====================" << endl; 
    
   return 0; 

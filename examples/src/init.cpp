@@ -52,13 +52,13 @@ int Init::initialize(int *N, double *sl, double *T,vector<double> *m, vector<dou
     normal_distribution<double> vdist(0,stdv);
     // I could, of course, have used 3 loops, but this is better flops/mops ;)
 
-    (*pos)[3*i] = 0.1 + bl * double(i % pl);						// x position in nm 
-    (*pos)[3*i+1] = 0.1 + bl * double((i / pl) % pl);					// y position in nm
-    (*pos)[3*i+2] = 0.1 +bl * double((i / int(pow(pl,2.0))) % int(pow(pl,2.0)));	// z position in nm
+    (*pos)[3*i] = (0.1 + bl * double(i % pl)) / *sl;						// x position in nm/sl 
+    (*pos)[3*i+1] = (0.1 + bl * double((i / pl) % pl)) / *sl;					// y position in nm/sl
+    (*pos)[3*i+2] = (0.1 +bl * double((i / int(pow(pl,2.0))) % int(pow(pl,2.0)))) / *sl;	// z position in nm/sl
 
-    (*vel)[3*i]=vdist(generator);					// x velocity in nm/ns
-    (*vel)[3*i+1]=vdist(generator);				// y velocity in nm/ns
-    (*vel)[3*i+2]=vdist(generator);				// z velocity in nm/ns
+    (*vel)[3*i]=(vdist(generator)) / *sl;					// x velocity in nm/ns
+    (*vel)[3*i+1]=(vdist(generator)) / *sl;				// y velocity in nm/ns
+    (*vel)[3*i+2]=(vdist(generator)) / *sl;				// z velocity in nm/ns
 
   }
 
@@ -73,8 +73,8 @@ int Init::initialize(int *N, double *sl, double *T,vector<double> *m, vector<dou
   velfile << "x velocity, y velocity, z velocity (nm/ns)\n"; 
   for (i=0; i < *N ; i++)
   {
-    posfile << (*pos)[3*i] << "  " << (*pos)[3*i+1] << "  " << (*pos)[3*i+2] << "\n";
-    velfile << (*vel)[3*i] << "  " << (*vel)[3*i+1] << "  " << (*vel)[3*i+2] << "\n";
+    posfile << (*pos)[3*i]* *sl << "  " << (*pos)[3*i+1]* *sl << "  " << (*pos)[3*i+2]* *sl << "\n";
+    velfile << (*vel)[3*i]* *sl << "  " << (*vel)[3*i+1]* *sl << "  " << (*vel)[3*i+2]* *sl << "\n";
   }
   
   posfile.close();

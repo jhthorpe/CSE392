@@ -98,16 +98,11 @@ int main(int argc, char* argv[])
   // Comments: make sure the directionality is being handled correctly... also add in boundary conditions 
   // This currently is NOT set up for boudnary conditions, the first particle is set at 0,0. Fix this.
 
+  vector<double> q(N, chrg); //LEAVE THIS GUY ALONE
 
   vector<double> force(N*3, 0.0);
-  
-  Forces_pvfmm forces_pvfmm;	//Forces class object, forces
 
-  //forces.LJ_seq_bound(&N,&sl,&sig,&eps,&pos,&force);
-  //cout << "seq done\n";
-//  forces.LJ_omp_bound(&N,&sl,&sig,&eps,&pos,&force);
-  
-  vector<double> q(N, chrg);
+  Forces_pvfmm forces_pvfmm;	//Forces class object, forces
   forces_pvfmm.elc_pvfmm(&N,&sl,&q,&pos,&force,&comm);
 
   // ~~~~~~~~~~			Start verlet		~~~~~~~~~~//

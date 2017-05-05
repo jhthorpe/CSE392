@@ -17,7 +17,7 @@ int Forces_pvfmm::elc_pvfmm(int *N, double *sl, vector<double> *q, vector<double
 {
   // Variables
   // N		: number of particles (int)
-  // sl		: length of cube (nm, int)
+  // sl		: length of cube (nm, double)
   // q		: 1D vector of charges (int)
   // pos	: 1D vector of positions (nm, double)
   // force	: 1D vector of forces (kg nm/ns^2, double)
@@ -26,53 +26,33 @@ int Forces_pvfmm::elc_pvfmm(int *N, double *sl, vector<double> *q, vector<double
 
   int mult_order=2; //should be taken as an option later
 
-  int i,j;
-  double ke = 8.89755e18; 	//in kg nm^3 / ns^2 C^2	
-
-  double fx,fy,fz,f;
-  double rx,ry,rz,r;
-
-  cout << "here1" << endl;
+  int i;
+  double ke = 8.89755e18 / pow(*sl,3); 	//in kg nm^3 / ns^2 C^2 sl^3	
 
   //########## setup pvfmm
   const pvfmm::Kernel<double>& kernal_fn=pvfmm::LaplaceKernel<double>::gradient();
 
   vector<double> dummy(0); //empty vector for the surface
 
-  //change distances (here for now)
-  for (i=0;i < *N;i++){
-    (*pos)[3*i] = (*pos)[3*i] / *sl;
-    (*pos)[3*i+1] = (*pos)[3*i+1] / *sl;
-    (*pos)[3*i+2] = (*pos)[3*i+2] / *sl;
-  } 
-
+  //create the memory manager (optional?)
   pvfmm::mem::MemoryManager mem_mgr(10000000);
 
-  cout << "before tree" << endl;
-
-  std::cout<<pos->size()<<' '<<q->size()<<'\n';
-  
   size_t max_pts=1;
   pvfmm::PtFMM_Tree* tree=PtFMM_CreateTree(*pos, *q, dummy, dummy, *pos, *comm, max_pts, pvfmm::FreeSpace );
 
-  cout << "before eval" << endl;
-
+  //initialize the matricies, only needs to be done once
   pvfmm::PtFMM matrices(&mem_mgr);
   matrices.Initialize(mult_order, *comm, &kernal_fn);
 
-  cout << "before eval" << endl;
-
+  //actually build tree
   tree->SetupFMM(&matrices);
 
-  cout << "before eval" << endl;
-
+  //evaluate tree
   PtFMM_Evaluate(tree, *force, *N); 
 
-  cout << "after eval" << endl;
+  //delete tree once finished
   delete tree;
   //##########
-
-  
 
   //Comment all this out if you don't want to see this 
   ofstream ffile;
@@ -80,10 +60,9 @@ int Forces_pvfmm::elc_pvfmm(int *N, double *sl, vector<double> *q, vector<double
   ffile << "fx, fy, fz (kg nm / ns^2)\n";
   for (i=0; i < *N ; i++)
   {
-    ffile << (*force)[3*i] << "  " << (*force)[3*i+1] << "  " << (*force)[3*i+2] << "\n"; 
+    ffile << (*force)[3*i]* *sl << "  " << (*force)[3*i+1]* *sl << "  " << (*force)[3*i+2]* *sl << "\n"; 
   };
 
   return 0;
 };
 
-//~~~     Electrostatic forces. Complete summation. Slow.     ~~~//
