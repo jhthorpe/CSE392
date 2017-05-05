@@ -1,2 +1,2 @@
 #! /bin/bash
-g++ -o runMD runMD.cpp parser.cpp killer.cpp init.cpp forces.cpp energy.cpp verlet.cpp
+g++ -o runMD -std=c++11 runMD.cpp parser.cpp killer.cpp init.cpp forces.cpp -fopenmp energy.cpp verlet.cpp
