@@ -287,7 +287,7 @@ int Forces::LJ_omp_bound(int *N, double *sl, double *sig, double *eps, vector<do
     {
       cout << "number of threads : " << omp_get_num_threads() << endl; 
     }
-    #pragma omp for schedule(dynamic) private(j,f,r,rx,ry,rz)
+    #pragma omp for simd schedule(dynamic,16) private(j,f,r,rx,ry,rz) nowait
       for (i=0; i < *N; i++)
       {
         for (j=i+1; j < *N; j++)
