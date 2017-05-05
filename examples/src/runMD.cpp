@@ -82,13 +82,9 @@ int main(int argc, char* argv[])
   // Comments: Needs to have parallel treatment. Velocities are in nm^2/ns^2. 
   // I have essentially hardcoded
   i = N * 3;
-  vector<double> pos;
-  vector<double> vel;
+  vector<double> pos(N*3,0.0);
+  vector<double> vel(N*3,0.0);
   vector<double> mass(N, m);		//vector of masses, not efficient or flexible right now
-  pos.reserve(N*3);	//reserve, but do not initialize, N*3 space. More efficient.
-  vel.reserve(N*3);
-  
-
   Init builder;
 
   status = builder.initialize(&N,&sl,&T,&mass,&pos,&vel);
