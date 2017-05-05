@@ -21,10 +21,10 @@ OBJDIR = ./obj
 INCDIR = ./include
 
 TARGET_BIN = \
-       $(BINDIR)/example1 \
        $(BINDIR)/runMD
+#       $(BINDIR)/example1 \
        
-SOURCE_FILES =  energy.cpp forces.cpp killer.cpp      parser.cpp  test.cpp    world.cpp forces_pvfmm.cpp  init.cpp   old_verlet.cpp verlet.cpp
+SOURCE_FILES =  energy.cpp forces.cpp killer.cpp parser.cpp test.cpp forces_pvfmm.cpp init.cpp old_verlet.cpp verlet.cpp
 
 OBJ_FILES =  obj/energy.o obj/forces.o obj/killer.o obj/parser.o obj/forces_pvfmm.o obj/init.o obj/verlet.o
 

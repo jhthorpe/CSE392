@@ -14,6 +14,7 @@
 #include <new>
 #include <vector>
 #include <cmath>
+#include <mpi.h>
 // our defined headers
 #include "parser.hpp"
 #include "killer.hpp"
@@ -21,10 +22,16 @@
 #include "forces.hpp"
 #include "forces_pvfmm.hpp"
 #include "verlet.hpp"
+#include <stacktrace.h>
 using namespace std;
 
-int main()
+
+int main(int argc, char* argv[])
 {
+  pvfmm::SetSigHandler();
+
+  MPI_Init(&argc, &argv);
+  MPI_Comm comm=MPI_COMM_WORLD;
   // Variable declarations
   // status 		: int, stores error and messages for output
   // N			: int, number of molecules in simulation (int)
@@ -85,6 +92,7 @@ int main()
   Init builder;
 
   status = builder.initialize(&N,&sl,&T,&mass,&pos,&vel);
+  cout << "initializer made : " << pos.size() << endl;
   if (status != 0)
   {
     killer.kill(status);
@@ -93,6 +101,7 @@ int main()
   // ~~~~~~~~~~			Testing forces		~~~~~~~~~~//
   // Comments: make sure the directionality is being handled correctly... also add in boundary conditions 
   // This currently is NOT set up for boudnary conditions, the first particle is set at 0,0. Fix this.
+
 
   vector<double> force(N*3, 0.0);
   
@@ -103,7 +112,7 @@ int main()
 //  forces.LJ_omp_bound(&N,&sl,&sig,&eps,&pos,&force);
   
   vector<double> q(N, chrg);
-  forces_pvfmm.elc_pvfmm(&N,&sl,&q,&pos,&force);
+  forces_pvfmm.elc_pvfmm(&N,&sl,&q,&pos,&force,&comm);
 
   // ~~~~~~~~~~			Start verlet		~~~~~~~~~~//
   // Comments: sequential velocity verlet integration. integrates position and velocity with periodic boundary conditions
@@ -120,6 +129,9 @@ int main()
 
   //Last line
   cout << endl << "Exiting runMD with status :" << status << endl;
+
+  MPI_Finalize();
+
   return status;
 
 }
