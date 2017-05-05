@@ -19,6 +19,7 @@
 #include "killer.hpp"
 #include "init.hpp"
 #include "forces.hpp"
+#include "forces_pvfmm.hpp"
 #include "verlet.hpp"
 using namespace std;
 
@@ -95,14 +96,14 @@ int main()
 
   vector<double> force(N*3, 0.0);
   
-  Forces forces;	//Forces class object, forces
+  Forces_pvfmm forces_pvfmm;	//Forces class object, forces
 
   //forces.LJ_seq_bound(&N,&sl,&sig,&eps,&pos,&force);
   //cout << "seq done\n";
-  forces.LJ_omp_bound(&N,&sl,&sig,&eps,&pos,&force);
+//  forces.LJ_omp_bound(&N,&sl,&sig,&eps,&pos,&force);
   
   vector<double> q(N, chrg);
-//  forces.elc_seq_bound(&N,&sl,&q,&pos,&force);
+  forces_pvfmm.elc_pvfmm(&N,&sl,&q,&pos,&force);
 
   // ~~~~~~~~~~			Start verlet		~~~~~~~~~~//
   // Comments: sequential velocity verlet integration. integrates position and velocity with periodic boundary conditions

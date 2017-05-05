@@ -26,6 +26,10 @@ class Forces
     //parallel LJ forces with periodic boundaries
     //number of mol, box length, sigma param, epsilon param, position vector, forces vector 
     int LJ_omp_bound(int *, double *, double *, double *, vector<double> * , vector<double> *);
+
+    //using pvfmm to impliment electrostatics
+    //number of mol, box length, charges, position vector, forces vector 
+    int elc_pvfmm(int *,double *, vector<double> *, vector<double> *, vector<double> *);
 };
 
 
