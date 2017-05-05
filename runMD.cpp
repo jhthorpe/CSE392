@@ -97,10 +97,11 @@ int main()
   
   Forces forces;	//Forces class object, forces
 
-//  forces.LJ_seq_bound(&N,&sl,&sig,&eps,&pos,&force);
+  //forces.LJ_seq_bound(&N,&sl,&sig,&eps,&pos,&force);
+  //cout << "seq done\n";
+  forces.LJ_omp_bound(&N,&sl,&sig,&eps,&pos,&force);
   
   vector<double> q(N, chrg);
-  forces.LJ_omp_bound(&N,&sl,&sig,&eps,&pos,&force);
 //  forces.elc_seq_bound(&N,&sl,&q,&pos,&force);
 
   // ~~~~~~~~~~			Start verlet		~~~~~~~~~~//
