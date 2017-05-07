@@ -22,16 +22,11 @@
 #include "forces.hpp"
 #include "forces_pvfmm.hpp"
 #include "verlet.hpp"
-#include <stacktrace.h>
 using namespace std;
 
 
 int main(int argc, char* argv[])
 {
-  pvfmm::SetSigHandler();
-
-  MPI_Init(&argc, &argv);
-  MPI_Comm comm=MPI_COMM_WORLD;
   // Variable declarations
   // status 		: int, stores error and messages for output
   // N			: int, number of molecules in simulation (int)
@@ -82,13 +77,16 @@ int main(int argc, char* argv[])
   // Comments: Needs to have parallel treatment. Velocities are in nm^2/ns^2. 
   // I have essentially hardcoded
   i = N * 3;
-  vector<double> pos(N*3,0.0);
-  vector<double> vel(N*3,0.0);
+  vector<double> pos;
+  vector<double> vel;
   vector<double> mass(N, m);		//vector of masses, not efficient or flexible right now
+  pos.reserve(N*3);	//reserve, but do not initialize, N*3 space. More efficient.
+  vel.reserve(N*3);
+  
+
   Init builder;
 
   status = builder.initialize(&N,&sl,&T,&mass,&pos,&vel);
-  cout << "initializer made : " << pos.size() << endl;
   if (status != 0)
   {
     killer.kill(status);
@@ -98,11 +96,18 @@ int main(int argc, char* argv[])
   // Comments: make sure the directionality is being handled correctly... also add in boundary conditions 
   // This currently is NOT set up for boudnary conditions, the first particle is set at 0,0. Fix this.
 
-  vector<double> q(N, chrg); //LEAVE THIS GUY ALONE
+  MPI_Init(&argc, &argv);
+  MPI_Comm comm=MPI_COMM_WORLD;
 
   vector<double> force(N*3, 0.0);
-
+  
   Forces_pvfmm forces_pvfmm;	//Forces class object, forces
+
+  //forces.LJ_seq_bound(&N,&sl,&sig,&eps,&pos,&force);
+  //cout << "seq done\n";
+//  forces.LJ_omp_bound(&N,&sl,&sig,&eps,&pos,&force);
+  
+  vector<double> q(N, chrg);
   forces_pvfmm.elc_pvfmm(&N,&sl,&q,&pos,&force,&comm);
 
   // ~~~~~~~~~~			Start verlet		~~~~~~~~~~//
