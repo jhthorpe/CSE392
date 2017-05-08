@@ -17,7 +17,7 @@ int Init_par::initialize_mpi(int *N, double *sl, double *T,vector<double> *m, ve
 {
   
   // Varaibles
-  // N		: input number of molecules in this task
+  // N		: total particles in total
   // sl		: input side length of box
   // T		: input temperature
   // m		: input mass
@@ -78,7 +78,7 @@ int Init_par::initialize_mpi(int *N, double *sl, double *T,vector<double> *m, ve
 
     posfile << "xpos, ypos, zpos (nm)\n";
     velfile << "x velocity, y velocity, z velocity (nm/ns)\n"; 
-    for (i=0; i < *N ; i++)
+    for (i=0; i < (*end-*start) ; i++)
     {
       posfile << (*pos)[3*i]* *sl << "  " << (*pos)[3*i+1]* *sl << "  " << (*pos)[3*i+2]* *sl << "\n";
       velfile << (*vel)[3*i]* *sl << "  " << (*vel)[3*i+1]* *sl << "  " << (*vel)[3*i+2]* *sl << "\n";

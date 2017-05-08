@@ -103,13 +103,17 @@ int main(int argc, char* argv[])
   Init_par builder;
 
 
-  status = builder.initialize_mpi(&taskN,&sl,&T,&mass,&pos,&vel,&start,&end,&comm); 	//build the simulation
+  status = builder.initialize_mpi(&N,&sl,&T,&mass,&pos,&vel,&start,&end,&comm); 	//build the simulation
+
+  cout << "task " << rank << " made " << pos.size() << " particles" << endl;
 
   if (status != 0)
   {
     killer.kill(status);
   }
 
+
+  /*
   
   // ~~~~~~~~~~			Testing forces		~~~~~~~~~~//
   // Comments: make sure the directionality is being handled correctly... also add in boundary conditions 
@@ -122,7 +126,6 @@ int main(int argc, char* argv[])
   Forces_pvfmm forces_pvfmm;	//Forces class object, forces
   forces_pvfmm.elc_pvfmm(&taskN,&sl,&q,&pos,&force,&comm);
 
-  /*
 
   // ~~~~~~~~~~			Start verlet		~~~~~~~~~~//
   // Comments: sequential velocity verlet integration. integrates position and velocity with periodic boundary conditions
