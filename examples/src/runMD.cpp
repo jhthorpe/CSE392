@@ -18,20 +18,15 @@
 // our defined headers
 #include "parser.hpp"
 #include "killer.hpp"
-#include "init.hpp"
+#include "init_par.hpp"
 #include "forces.hpp"
 #include "forces_pvfmm.hpp"
 #include "verlet.hpp"
-#include <stacktrace.h>
 using namespace std;
 
 
 int main(int argc, char* argv[])
 {
-  pvfmm::SetSigHandler();
-
-  MPI_Init(&argc, &argv);
-  MPI_Comm comm=MPI_COMM_WORLD;
   // Variable declarations
   // status 		: int, stores error and messages for output
   // N			: int, number of molecules in simulation (int)
@@ -58,14 +53,16 @@ int main(int argc, char* argv[])
   // Internal variables
   int i,j,k;
 
+  //MPI variables
+  int rank,np,b,start,end;
+
   // ~~~~~~~~~~~		Begin Program		~~~~~~~~~~//
   // Comments :
 
-  cout <<  "Starting runMD, Version 0.0 ...." << endl;
+  cout <<  "Starting runMD, Version 1.0 ...." << endl;
 
   // Create our running objects
   Killer killer;
-  Init init;
 
   // ~~~~~~~~~~			Get Input		~~~~~~~~~~//
   // Comments: May want to test that the types are correct - Mar 28, 2017
@@ -78,32 +75,54 @@ int main(int argc, char* argv[])
     return status;
   }
 
-  // ~~~~~~~~~~			Initialize Box		~~~~~~~~~~//
+  // ~~~~~~~~~~		MPI Initialize Box		~~~~~~~~~~//
   // Comments: Needs to have parallel treatment. Velocities are in nm^2/ns^2. 
   // I have essentially hardcoded
-  i = N * 3;
-  vector<double> pos(N*3,0.0);
-  vector<double> vel(N*3,0.0);
-  vector<double> mass(N, m);		//vector of masses, not efficient or flexible right now
-  Init builder;
 
-  status = builder.initialize(&N,&sl,&T,&mass,&pos,&vel);
-  cout << "initializer made : " << pos.size() << endl;
+  MPI_Init(&argc, &argv);		//initialize MPI enviroment
+  MPI_Comm comm=MPI_COMM_WORLD;
+
+  MPI_Comm_rank(comm, &rank);	//task number
+  MPI_Comm_size(comm, &np);    //number of tasks
+
+  //Figure out where start and end are for the tasks
+  b = N / np;			//number of calcuations per processor
+  start = rank * (b);
+  if (rank == (np-1)){
+    end=N-1;
+  }else{
+    end = start + b - 1;		
+  }
+
+  int taskN = end-start+1;
+
+  vector<double> pos(taskN*3,0.0);
+  vector<double> vel(taskN*3,0.0);
+  vector<double> mass(taskN, m);		//vector of masses, not efficient or flexible right now
+
+  Init_par builder;
+
+
+  status = builder.initialize_mpi(&taskN,&sl,&T,&mass,&pos,&vel,&start,&end,&comm); 	//build the simulation
+
   if (status != 0)
   {
     killer.kill(status);
   }
 
+  
   // ~~~~~~~~~~			Testing forces		~~~~~~~~~~//
   // Comments: make sure the directionality is being handled correctly... also add in boundary conditions 
   // This currently is NOT set up for boudnary conditions, the first particle is set at 0,0. Fix this.
 
-  vector<double> q(N, chrg); //LEAVE THIS GUY ALONE
+  vector<double> q(taskN, chrg); //LEAVE THIS GUY ALONE
 
-  vector<double> force(N*3, 0.0);
+  vector<double> force(taskN*3, 0.0);
 
   Forces_pvfmm forces_pvfmm;	//Forces class object, forces
-  forces_pvfmm.elc_pvfmm(&N,&sl,&q,&pos,&force,&comm);
+  forces_pvfmm.elc_pvfmm(&taskN,&sl,&q,&pos,&force,&comm);
+
+  /*
 
   // ~~~~~~~~~~			Start verlet		~~~~~~~~~~//
   // Comments: sequential velocity verlet integration. integrates position and velocity with periodic boundary conditions
@@ -120,6 +139,8 @@ int main(int argc, char* argv[])
 
   //Last line
   cout << endl << "Exiting runMD with status :" << status << endl;
+
+  */
 
   MPI_Finalize();
 

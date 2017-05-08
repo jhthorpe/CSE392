@@ -24,9 +24,9 @@ TARGET_BIN = \
        $(BINDIR)/runMD
 #       $(BINDIR)/example1 \
        
-SOURCE_FILES =  energy.cpp forces.cpp killer.cpp parser.cpp test.cpp forces_pvfmm.cpp init.cpp old_verlet.cpp verlet.cpp
+SOURCE_FILES =  energy.cpp forces.cpp killer.cpp parser.cpp test.cpp forces_pvfmm.cpp init.cpp old_verlet.cpp verlet.cpp init_par.cpp #verlet_par.cpp
 
-OBJ_FILES =  obj/energy.o obj/forces.o obj/killer.o obj/parser.o obj/forces_pvfmm.o obj/init.o obj/verlet.o
+OBJ_FILES =  obj/energy.o obj/forces.o obj/killer.o obj/parser.o obj/forces_pvfmm.o obj/init.o obj/verlet.o obj/init_par.o #obj/verlet_par.o
 
 # $(addprefix obj/, $($(SOURCE_FILES):.cpp=.o))
 

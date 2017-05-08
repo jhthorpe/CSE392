@@ -54,7 +54,24 @@ int Forces_pvfmm::elc_pvfmm(int *N, double *sl, vector<double> *q, vector<double
   delete tree;
   //##########
 
+  int rank;
+  MPI_Comm_rank(*comm,&rank);
+  if (rank == 0 || rank == 1) {
+    ofstream ffile;
+    if (!rank) {
+      //ofstream ffile0;
+      ffile.open("task0");
+    } else {
+      //ofstream ffile1;
+      ffile.open("task1");
+    }
+    ffile << "forces from task " << rank << endl;
+    for (i=0; i < *N ; i++) ffile << (*force)[3*i]* *sl << "  " << (*force)[3*i+1]* *sl << "  " << (*force)[3*i+2]* *sl << "\n"; 
+    ffile.close();
+  }
+
   //Comment all this out if you don't want to see this 
+  /*
   ofstream ffile;
   ffile.open("forces.txt");
   ffile << "fx, fy, fz (kg nm / ns^2)\n";
@@ -62,6 +79,8 @@ int Forces_pvfmm::elc_pvfmm(int *N, double *sl, vector<double> *q, vector<double
   {
     ffile << (*force)[3*i]* *sl << "  " << (*force)[3*i+1]* *sl << "  " << (*force)[3*i+2]* *sl << "\n"; 
   };
+  ffile.close();
+  */
 
   return 0;
 };
