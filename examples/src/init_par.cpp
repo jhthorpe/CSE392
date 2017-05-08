@@ -29,18 +29,18 @@ int Init_par::initialize_mpi(int *N, double *sl, double *T,vector<double> *m, ve
   // end	: end index for task
 
   // Internal variables
-  int i,flag;
+  int i,j,flag;
   double kB = 1.38064852e-23; 		// in J/K, which coincidentely works for nm^2/ns^2
-  int rank;
+  int rank,size;
 
   MPI_Comm_rank(*comm,&rank);
 
-  cout << "Initializer called..." << endl;
+  if (!rank) cout << "Initializer called..." << endl;
 
   int pl = ceil(pow(*N,1.0/3.0));
   double bl = double((*sl-0.1) /double(pl+1)); 
 
-  cout << "particles will be placed " << bl << " nm apart." << endl;
+  if (!rank) cout << "particles will be placed " << bl << " nm apart." << endl;
 
   random_device generator;		//random_device class object, generator
 
@@ -63,32 +63,41 @@ int Init_par::initialize_mpi(int *N, double *sl, double *T,vector<double> *m, ve
 
   // Write out initial position and velocities
 
-  if (rank == 0 || rank == 1){
+  //get max rank
+  int maxrank;
+  MPI_Allreduce(&rank,&maxrank,1, MPI_INT, MPI_MAX, *comm);
 
-    ofstream posfile; 		//ofstream class object, posfile, for initial positions
-    ofstream velfile; 		//ofstream class object, velfile, for initial velocities
+  //Please don't look at this code!!!
+  MPI_Barrier(*comm);
+  for (i=0;i<=maxrank;i++) {
+    if (rank == i) {
 
-    if (!rank){
-      posfile.open("init_pos0.txt");
-      velfile.open("init_vel0.txt");
-    } else {
-      posfile.open("init_pos1.txt");
-      velfile.open("init_vel1.txt");
-    }
+      ofstream posfile; 		//ofstream class object, posfile, for initial positions
+      ofstream velfile; 		//ofstream class object, velfile, for initial velocities
 
-    posfile << "xpos, ypos, zpos (nm)\n";
-    velfile << "x velocity, y velocity, z velocity (nm/ns)\n"; 
-    for (i=0; i < (*end-*start) ; i++)
-    {
-      posfile << (*pos)[3*i]* *sl << "  " << (*pos)[3*i+1]* *sl << "  " << (*pos)[3*i+2]* *sl << "\n";
-      velfile << (*vel)[3*i]* *sl << "  " << (*vel)[3*i+1]* *sl << "  " << (*vel)[3*i+2]* *sl << "\n";
-    }
+      if (!rank){
+        posfile.open("init_pos.txt", ofstream::out);
+        velfile.open("init_vel.txt", ofstream::out);
+      } else {
+        posfile.open("init_pos.txt", ofstream::out|ofstream::app);
+        velfile.open("init_vel.txt", ofstream::out|ofstream::app);
+      }
+
+      if (!rank) {
+        posfile << "xpos, ypos, zpos (nm)\n";
+        velfile << "x velocity, y velocity, z velocity (nm/ns)\n"; 
+      }
+      posfile << "output from task : " << rank << "\n";
+      for (j=0; j < (*end-*start) ; j++){
+        posfile << (*pos)[3*j]* *sl << "  " << (*pos)[3*j+1]* *sl << "  " << (*pos)[3*j+2]* *sl << "\n";
+        velfile << (*vel)[3*j]* *sl << "  " << (*vel)[3*j+1]* *sl << "  " << (*vel)[3*j+2]* *sl << "\n";
+      }
   
-    posfile.close();
-    velfile.close();
+      posfile.close();
+      velfile.close();
 
-    cout << "Initial positions written to init_pos.txt\nInitial velocities written to init_vel.txt" << endl;
-
+    } 
+    MPI_Barrier(*comm);
   }
 
   return 0;

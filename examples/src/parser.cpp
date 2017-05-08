@@ -2,15 +2,19 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <mpi.h>
 #include "parser.hpp"
 using namespace std;
 
-int Parser::getInput(int *N, double *sl, double *T, double *m, double *ts, int *ns, int *ss, double *sig, double *eps, double *q, int options[])
+int Parser::getInput(int *N, double *sl, double *T, double *m, double *ts, int *ns, int *ss, double *sig, double *eps, double *q, MPI_Comm * comm)
 {
-  int i;
+  int i,rank;
 
-  cout << "====================" << endl; 
-  cout << "Parser called. Getting input..." << endl;
+  MPI_Comm_rank(*comm,&rank);
+  if (!rank) {
+    cout << "====================" << endl; 
+    cout << "Parser called. Getting input..." << endl;
+  }
 
   // Open input.dat
   fstream inFile;	// Create fstream class object, "inFile"
@@ -33,46 +37,59 @@ int Parser::getInput(int *N, double *sl, double *T, double *m, double *ts, int *
   // Close input.dat  
   inFile.close();
 
+  
   // Print what saw
-  cout << "Parser saw these values:" << endl;
-  cout << "Number of molecules : " << *N << endl;
-  cout << "Box length (nm) : " << *sl << endl; 
-  cout << "Temperature (K) : " << *T << endl; 
-  cout << "Molecule mass (g/mol) : " << *m << endl; 
-  cout << "Time Step (fs) : " << *ts << endl; 
-  cout << "Number of Steps : " << *ns << endl; 
-  cout << "Numner of steps to display : " << *ss << endl;
-  cout << "LJ sigma (m) : " << *sig << endl;
-  cout << "LJ epsilon (J) : " << *eps << endl;
-  cout << "Charges : " << *q << endl;
+  if (!rank) {
+    cout << "Parser saw these values:" << endl;
+    cout << "Number of molecules : " << *N << endl;
+    cout << "Box length (nm) : " << *sl << endl; 
+    cout << "Temperature (K) : " << *T << endl; 
+    cout << "Molecule mass (g/mol) : " << *m << endl; 
+    cout << "Time Step (fs) : " << *ts << endl; 
+    cout << "Number of Steps : " << *ns << endl; 
+    cout << "Numner of steps to display : " << *ss << endl;
+    cout << "LJ sigma (m) : " << *sig << endl;
+    cout << "LJ epsilon (J) : " << *eps << endl;
+    cout << "Charges : " << *q << endl;
 
   // Correct units
   cout << endl;
   cout << "Converting units..." << endl;
   cout <<  "Mass -> kg/particle" << endl;
+  }
   *m = *m / 6.02214e26; 
-  cout << "new mass: " << *m << endl;
+  if (!rank) {
+    cout << "new mass: " << *m << endl;
 
-  cout << "Meters -> nm" << endl;
+    cout << "Meters -> nm" << endl;
+  }
   *sig = *sig * 1.0e9;
-  cout << "new LJ sigma : " << *sig << endl; 
+  if (!rank) {
+    cout << "new LJ sigma : " << *sig << endl; 
 
-  cout << "Charges -> Coulombs " << endl;
+    cout << "Charges -> Coulombs " << endl;
+  }
   *q = *q * 1.9e-19;
-  cout << "new charges : " << *q << endl;
+  if (!rank) {
+    cout << "new charges : " << *q << endl;
 
-  cout << "fs -> ns " << endl;
+    cout << "fs -> ns " << endl;
+  }
   *ts = *ts * 1e-6;
-  cout << "new times : " << *ts << endl;
+  if (!rank) {
+    cout << "new times : " << *ts << endl;
 
   //Normalizing to side length
-  cout << "Normalizing to side length. Following values will be changed:\n";
+    cout << "Normalizing to side length. Following values will be changed:\n";
+  }
   *sig = *sig / *sl; 
   *eps = *eps / pow(*sl,2);
-  cout << "LJ sigma, LJ epsilon, ke, position, velocity, force, energy ..." << endl; 
+  if (!rank) {
+    cout << "LJ sigma, LJ epsilon, ke, position, velocity, force, energy ..." << endl; 
   
   
-  cout << "====================" << endl; 
+    cout << "====================" << endl; 
+  }
    
   return 0; 
 } 

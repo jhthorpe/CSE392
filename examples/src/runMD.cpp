@@ -27,6 +27,9 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
+  MPI_Init(&argc, &argv);		//initialize MPI enviroment
+  MPI_Comm comm=MPI_COMM_WORLD;
+
   // Variable declarations
   // status 		: int, stores error and messages for output
   // N			: int, number of molecules in simulation (int)
@@ -59,7 +62,11 @@ int main(int argc, char* argv[])
   // ~~~~~~~~~~~		Begin Program		~~~~~~~~~~//
   // Comments :
 
-  cout <<  "Starting runMD, Version 1.0 ...." << endl;
+  MPI_Comm_rank(comm, &rank);	//task number
+  MPI_Comm_size(comm, &np);    //number of tasks
+
+  if (!rank) cout <<  "Starting runMD, Version 1.0 ...." << endl;
+  if (!rank) cout << "Number of processors : " << np << endl;
 
   // Create our running objects
   Killer killer;
@@ -68,7 +75,7 @@ int main(int argc, char* argv[])
   // Comments: May want to test that the types are correct - Mar 28, 2017
 
   Parser parser;	//this creates our "Parser" class object, "parser"
-  status = parser.getInput(&N, &sl, &T, &m, &ts, &ns, &ss, &sig, &eps, &chrg, options);
+  status = parser.getInput(&N, &sl, &T, &m, &ts, &ns, &ss, &sig, &eps, &chrg, &comm);
   if (status != 0)
   {
     killer.kill(status);
@@ -79,11 +86,6 @@ int main(int argc, char* argv[])
   // Comments: Needs to have parallel treatment. Velocities are in nm^2/ns^2. 
   // I have essentially hardcoded
 
-  MPI_Init(&argc, &argv);		//initialize MPI enviroment
-  MPI_Comm comm=MPI_COMM_WORLD;
-
-  MPI_Comm_rank(comm, &rank);	//task number
-  MPI_Comm_size(comm, &np);    //number of tasks
 
   //Figure out where start and end are for the tasks
   b = N / np;			//number of calcuations per processor
