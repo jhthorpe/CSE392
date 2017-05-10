@@ -22,6 +22,8 @@
 #include "forces.hpp"
 #include "forces_pvfmm.hpp"
 #include "verlet.hpp"
+#include "potentials.hpp"
+#include <stacktrace.h>
 using namespace std;
 
 
@@ -56,7 +58,7 @@ int main(int argc, char* argv[])
   // ~~~~~~~~~~~		Begin Program		~~~~~~~~~~//
   // Comments :
 
-  cout <<  "Starting runMD, Version 0.0 ...." << endl;
+  cout <<  "Starting runMD, Version 1.0 ...." << endl;
 
   // Create our running objects
   Killer killer;
@@ -98,24 +100,35 @@ int main(int argc, char* argv[])
 
   MPI_Init(&argc, &argv);
   MPI_Comm comm=MPI_COMM_WORLD;
+  vector<double> q(N, chrg);
+  potentials pot;
 
-  vector<double> force(N*3, 0.0);
+  vector<double> force(N*3,0.0); double elcpoten_energy=0.0, LJpoten_energy=0.0;
+
+  pot.elc_pvfmm(&N,&sl,&q,&pos,&force,&elcpoten_energy,&comm); 
+  pot.LJ_pvfmm(&N,&sl,&sig,&eps,&pos,&force,&LJpoten_energy,&comm);
+  //  vector<double> force(N*3, 0.0);
+
+  //  Forces_pvfmm forces_pvfmm;	//Forces class object, forces
+  //  forces_pvfmm.elc_pvfmm(&N,&sl,&q,&pos,&force,&comm);
+
+  //  vector<double> force(N*3, 0.0);
   
-  Forces_pvfmm forces_pvfmm;	//Forces class object, forces
+  // Forces_pvfmm forces_pvfmm;	//Forces class object, forces
 
   //forces.LJ_seq_bound(&N,&sl,&sig,&eps,&pos,&force);
   //cout << "seq done\n";
-//  forces.LJ_omp_bound(&N,&sl,&sig,&eps,&pos,&force);
+  //  forces.LJ_omp_bound(&N,&sl,&sig,&eps,&pos,&force);
   
-  vector<double> q(N, chrg);
-  forces_pvfmm.elc_pvfmm(&N,&sl,&q,&pos,&force,&comm);
+  //  vector<double> q(N, chrg);
+  //  forces_pvfmm.elc_pvfmm(&N,&sl,&q,&pos,&force,&comm);
 
   // ~~~~~~~~~~			Start verlet		~~~~~~~~~~//
-  // Comments: sequential velocity verlet integration. integrates position and velocity with periodic boundary conditions
+  // Comments: sequential velocity verlet integration. integrates position and velocity with periodic boundary conditions. Now with PVFMM
 
-//  verlet v;           //verlet class object, v
+  //  verlet v;           //verlet class object, v
 
-//  v.Integration(&N,&ns,&ss,&ts,&sl,&sig,&eps,&q,&mass,&pos,&vel);
+  //  v.Integration(&N,&ns,&ss,&ts,&sl,&sig,&eps,&q,&mass,&pos,&vel,&comm);
 
   //energy e;          //energy class object, e
 

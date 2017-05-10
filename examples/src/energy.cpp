@@ -10,7 +10,7 @@ using namespace std;
 
 //Evaluate kinetic energy of all atoms
 
-int energy::kinetic_seq(int *N, vector<double> *mass, vector<double> *vel, double *kin, double *temp)
+int energy::kinetic_seq(int *N, double *sl, vector<double> *mass, vector<double> *vel, double *kin, double *temp)
 {
   //Variables
   // N          : number of input molecules
@@ -20,7 +20,7 @@ int energy::kinetic_seq(int *N, vector<double> *mass, vector<double> *vel, doubl
   // kin        : Total kinetic energy (kg nm^2/ns^2)
   // temp       : Temperature in (degrees Kelvin)
 
-  double kB = 1.38064852e-23;     //Boltzmann constant (kg-nm^2/ns^2-K)
+  double kB = 1.38064852e-23 / (*sl * *sl);     //Boltzmann constant (kg-nm^2/ns^2-K-sl^2)
 
   //internal variables                                                                                                                                                  
   int i;

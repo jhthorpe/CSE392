@@ -1,4 +1,4 @@
--include /home1/04784/thorpe/project/pvfmm/MakeVariables
+-include /home1/03838/rsatija/pvfmm/MakeVariables
 
 ifndef CXX_PVFMM
 -include MakeVariables
@@ -24,9 +24,9 @@ TARGET_BIN = \
        $(BINDIR)/runMD
 #       $(BINDIR)/example1 \
        
-SOURCE_FILES =  energy.cpp forces.cpp killer.cpp parser.cpp test.cpp forces_pvfmm.cpp init.cpp old_verlet.cpp verlet.cpp
+SOURCE_FILES =  energy.cpp forces.cpp killer.cpp parser.cpp test.cpp forces_pvfmm.cpp init.cpp old_verlet.cpp verlet.cpp potentials.cpp
 
-OBJ_FILES =  obj/energy.o obj/forces.o obj/killer.o obj/parser.o obj/forces_pvfmm.o obj/init.o obj/verlet.o
+OBJ_FILES =  obj/energy.o obj/forces.o obj/killer.o obj/parser.o obj/forces_pvfmm.o obj/init.o obj/verlet.o obj/potentials.o
 
 # $(addprefix obj/, $($(SOURCE_FILES):.cpp=.o))
 
