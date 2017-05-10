@@ -11,7 +11,7 @@
 using namespace std;
 
 //Global variables, to be assigned values upon function calls
-double eps_global, ke_global;
+double eps_global, sig_global, ke_global;
 
 //Laplace potential kernel
 template <class Real>
@@ -52,7 +52,7 @@ void laplace_poten_and_grad(Real* r_src, int src_cnt, Real* v_src, int dof, Real
      }
      for (int i=0;i<4;i++) {
        v_trg[t*4+i] += p[i] * OOFP;                                 //Multiply by electric constant to get correct units
-       cout << "elc v_trg[t*4+" << i << "] =" << v_trg[t*4+i] << endl;
+       //       cout << "elc v_trg[t*4+" << i << "] =" << v_trg[t*4+i] << endl;
      }
    }
  }
@@ -70,20 +70,21 @@ void laplace_poten_and_grad(Real* r_src, int src_cnt, Real* v_src, int dof, Real
        Real R2 = (dR[0] * dR[0] + dR[1] * dR[1] + dR[2] * dR[2]);   //Distance squared between r_trg and r_src
        if (R2 != 0){
          Real invR2 = 1.0/R2;                                       //Inverse distance squared (scaled by sigma)
-         Real invR12= pow(invR2,6), invR6= pow(invR2,3);            //Inverse scaled distance to powers 12 and 6
-         p[0] += 12 * v_src[s] * invR12 * invR2 * dR[0];
-         q[0] += 6  * v_src[s] *  invR6 * invR2 * dR[0];            //Forces in x-direction
-         p[1] += 12 * v_src[s] * invR12 * invR2 * dR[1];
-         q[1] += 6  * v_src[s] *  invR6 * invR2 * dR[1];            //Forces in y-direction
-         p[2] += 12 * v_src[s] * invR12 * invR2 * dR[2];
-         q[2] += 6  * v_src[s] *  invR6 * invR2 * dR[2];            //Forces in z-direction
-         p[3] +=      v_src[s] * invR12;
-         q[3] +=      v_src[s] *  invR6;                            //Potential energies
+         Real invR12= pow(invR2,6), sig12= pow(sig_global,12); 
+	 Real invR6 = pow(invR2,3), sig6 = pow(sig_global,6 );  
+         p[0] += 12 * v_src[s] * sig12 * invR12 * invR2 * dR[0];
+         q[0] += 6  * v_src[s] * sig6  *  invR6 * invR2 * dR[0];            //Forces in x-direction
+         p[1] += 12 * v_src[s] * sig12 * invR12 * invR2 * dR[1];
+         q[1] += 6  * v_src[s] * sig6  *  invR6 * invR2 * dR[1];            //Forces in y-direction
+         p[2] += 12 * v_src[s] * sig12 * invR12 * invR2 * dR[2];
+         q[2] += 6  * v_src[s] * sig6  *  invR6 * invR2 * dR[2];            //Forces in z-direction
+         p[3] +=      v_src[s] * sig12 * invR12;
+         q[3] +=      v_src[s] * sig6  *  invR6;                            //Potential energies
        }
      }
      for (int i=0;i<4;i++) {
        v_trg[t*4+i] += (p[i] - q[i]) * LJFP;                        //Final values of LJ forces and energies
-       cout << "LJ v_trg[t*4+" << i << "] =" << v_trg[t*4+i] << endl;
+       //       cout << "LJ v_trg[t*4+" << i << "] =" << v_trg[t*4+i] << endl;
      }
    }
 }
@@ -109,6 +110,7 @@ int potentials::elc_pvfmm(int *N, double *sl, vector<double> *q, vector<double> 
   int i;
   double ke = 8.89755e18 * (*q)[0] * (*q)[0] / pow(*sl,3);  //in kg nm^3 / ns^2 sl^3; scaled with respect to charges for kernel defintion. THIS REQUIRES ALL CHARGES TO BE SAME 
   ke_global = ke;
+  vector<double> src_value(*N, 1.0);                        //default value for src_value 
   vector<double> poten_and_grad(4 * *N, 0.0);               //vector to store output from laplace_poten_and_grad()
   vector<double> dummy(0);                                  //empty vector for the surface
 
@@ -120,7 +122,7 @@ int potentials::elc_pvfmm(int *N, double *sl, vector<double> *q, vector<double> 
   pvfmm::mem::MemoryManager mem_mgr(10000000);
 
   size_t max_pts=1;
-  pvfmm::PtFMM_Tree* tree=PtFMM_CreateTree(*pos, *q, dummy, dummy, *pos, *comm, max_pts, pvfmm::FreeSpace );
+  pvfmm::PtFMM_Tree* tree=PtFMM_CreateTree(*pos, src_value, dummy, dummy, *pos, *comm, max_pts, pvfmm::Periodic );
 
   //initialize the matrices, only needs to be done once
   pvfmm::PtFMM matrices(&mem_mgr);
@@ -194,12 +196,8 @@ int potentials::LJ_pvfmm(int *N, double *sl, double *sig, double *eps, vector<do
   int i;
   vector<double> src_value(*N, 1.0);            //default value for src_value
   vector<double> poten_and_grad(4 * *N, 0.0);   //Output vector for lj_poten_and_grad()
-  vector<double> scaled_pos(3 * *N);            //1D vector to scale position w.r.t sigma: Final units (nm / sl) * (sl / nm)
-  for (i=0; i< (3 * *N); i++) scaled_pos[i] = (*pos)[i] / *sig ;       //Scale position with respect to sigma for LJ kernel calculation 
 
-  //  cout << "scaled_pos: " << scaled_pos[0] << ", " << scaled_pos[1] << ", " << scaled_pos[2] << ", " << scaled_pos[3] << ", " << scaled_pos[4] << ", " << scaled_pos[5] << endl;
-
-  eps_global = *eps / *sig ;                    //For the sake of kernel function
+  eps_global = *eps; sig_global = *sig;             
 
   //Build kernels
   const pvfmm::Kernel<double> lj_ker=pvfmm::BuildKernel<double, lj_poten_and_grad<double> >("lj-poten-and-grad", 3, std::pair<int,int>(1,4));
@@ -210,7 +208,7 @@ int potentials::LJ_pvfmm(int *N, double *sl, double *sig, double *eps, vector<do
   pvfmm::mem::MemoryManager mem_mgr(10000000);
 
   size_t max_pts = 10;
-  pvfmm::PtFMM_Tree* tree=PtFMM_CreateTree( *pos, src_value, dummy, dummy, *pos, *comm, max_pts, pvfmm::FreeSpace );
+  pvfmm::PtFMM_Tree* tree=PtFMM_CreateTree( *pos, src_value, dummy, dummy, *pos, *comm, max_pts, pvfmm::Periodic );
 
   //initialize the matricies, only needs to be done once
   pvfmm::PtFMM matrices(&mem_mgr);
@@ -228,19 +226,19 @@ int potentials::LJ_pvfmm(int *N, double *sl, double *sig, double *eps, vector<do
   delete tree;
 
   //Comment all this out if you don't want to see this
-  /*
+  
   ofstream ljfile;
   ljfile.open("LJforces.txt");
   ljfile << "fx, fy, fz (kg nm / ns^2)\n";
   for (i=0; i < *N ; i++)
     {
-      (*force)[3*i  ] += poten_and_grad[4*i  ]         ;
-      (*force)[3*i+1] += poten_and_grad[4*i+1]         ;
-      (*force)[3*i+2] += poten_and_grad[4*i+2]         ;
-      *LJpoten_energy += poten_and_grad[4*i+3] * (*sig);                                         //Final value of potential energy has a correction factor due to kernel definition
+      (*force)[3*i  ] += poten_and_grad[4*i  ];
+      (*force)[3*i+1] += poten_and_grad[4*i+1];
+      (*force)[3*i+2] += poten_and_grad[4*i+2];
+      *LJpoten_energy += poten_and_grad[4*i+3];                                         //Final value of potential energy has a correction factor due to kernel definition
       ljfile << (*force)[3*i]* *sl << "  " << (*force)[3*i+1]* *sl << "  " << (*force)[3*i+2]* *sl << "\n"; //All forces re-scaled back to Newton by multiplying by side length 
     };
   ljfile.close();
-  */
+
   return 0;
 };
