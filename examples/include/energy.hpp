@@ -4,11 +4,11 @@
 #include <vector>
 using namespace std;
 
-class energy 
+class energy
 {
 public:
-//Calculate total kinetic energy of system sequenctially: Number of atoms, mass vector, velocity vector, kinetic energy, temperature
-  int kinetic_seq(int *, vector<double> *, vector<double> *, double *, double *);
+//Calculate total kinetic energy of system sequenctially: Number of atoms, side length, mass vector, velocity vector, kinetic energy, temperature
+  int kinetic_seq(int *, double *, vector<double> *, vector<double> *, double *, double *);
 
 //Calculate Lennard Jones potential energy inside the system sequentially: Number of atoms, side length, sigma, epsilon, position vector, LJ potential energy
   int LJpot_seq(int *, double *, double *, double *, vector<double> *, double *);
@@ -19,3 +19,4 @@ public:
 };
 
 #endif
+

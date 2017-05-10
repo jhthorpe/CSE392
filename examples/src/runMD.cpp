@@ -22,8 +22,9 @@
 #include "forces.hpp"
 #include "forces_pvfmm.hpp"
 #include "verlet.hpp"
+#include "potentials.hpp"
+#include "energy.hpp"
 using namespace std;
-
 
 int main(int argc, char* argv[])
 {
@@ -107,28 +108,39 @@ int main(int argc, char* argv[])
 
   status = builder.initialize_mpi(&N,&sl,&T,&mass,&pos,&vel,&start,&end,&comm); 	//build the simulation
 
-  cout << "task " << rank << " made " << pos.size() << " particles" << endl;
+  //cout << "task " << rank << " made " << pos.size() << " particles" << endl;
 
   if (status != 0)
   {
     killer.kill(status);
+    return 1;
   }
-
-
-  /*
   
+  // ~~~~~~~~~~			Testing potential		~~~~~~~~~~//
+  potentials pot;  
+  vector<double> q(taskN, chrg); //LEAVE THIS GUY ALONE  
+  vector<double> force(taskN*3, 0.0);
+  double elcpoten_energy=0.0,LJpoten_energy=0.0;
+
+  cout << "task " << rank << " before elec\n";
+  pot.elc_pvfmm(&taskN,&sl,&q,&pos,&force,&elcpoten_energy,&comm,&start);
+  cout << "task " << rank << " after elec\n";
+  pot.LJ_pvfmm(&taskN,&sl,&sig,&eps,&pos,&force,&LJpoten_energy,&comm);
+  cout << "task " << rank << " after LJ\n";
+
+
   // ~~~~~~~~~~			Testing forces		~~~~~~~~~~//
   // Comments: make sure the directionality is being handled correctly... also add in boundary conditions 
   // This currently is NOT set up for boudnary conditions, the first particle is set at 0,0. Fix this.
 
-  vector<double> q(taskN, chrg); //LEAVE THIS GUY ALONE
+//  vector<double> q(taskN, chrg); //LEAVE THIS GUY ALONE
 
-  vector<double> force(taskN*3, 0.0);
+//  vector<double> force(taskN*3, 0.0);
 
-  Forces_pvfmm forces_pvfmm;	//Forces class object, forces
-  forces_pvfmm.elc_pvfmm(&taskN,&sl,&q,&pos,&force,&comm);
-
-
+//  Forces_pvfmm forces_pvfmm;	//Forces class object, forces
+//  forces_pvfmm.elc_pvfmm(&taskN,&sl,&q,&pos,&force,&comm,&start,&end);
+  
+  /*
   // ~~~~~~~~~~			Start verlet		~~~~~~~~~~//
   // Comments: sequential velocity verlet integration. integrates position and velocity with periodic boundary conditions
 

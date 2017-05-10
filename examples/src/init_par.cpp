@@ -47,7 +47,7 @@ int Init_par::initialize_mpi(int *N, double *sl, double *T,vector<double> *m, ve
   // Create our cube of molecules 
   for (i=*start; i < *end; i++) 
   {
-    double stdv = pow(kB * *T / (*m)[i],0.5);
+    double stdv = pow(kB * *T / (*m)[(i-*start)],0.5);
     normal_distribution<double> vdist(0,stdv);
     // I could, of course, have used 3 loops, but this is better flops/mops ;)
 
@@ -64,11 +64,18 @@ int Init_par::initialize_mpi(int *N, double *sl, double *T,vector<double> *m, ve
   // Write out initial position and velocities
 
   //get max rank
-  int maxrank;
+  int maxrank,np;
+  MPI_Comm_size(*comm, &np);
   MPI_Allreduce(&rank,&maxrank,1, MPI_INT, MPI_MAX, *comm);
 
-  //Please don't look at this code!!!
+  //Our check for if there is a bad rank
+  if (maxrank > np){
+    if (!rank) cout << "Crital error in rank. We have a rank > number of processors. Exiting." << endl;
+    return 1;
+  }
+
   MPI_Barrier(*comm);
+  //Pay no attention to the man behind the curtain!
   for (i=0;i<=maxrank;i++) {
     if (rank == i) {
 
@@ -88,6 +95,7 @@ int Init_par::initialize_mpi(int *N, double *sl, double *T,vector<double> *m, ve
         velfile << "x velocity, y velocity, z velocity (nm/ns)\n"; 
       }
       posfile << "output from task : " << rank << "\n";
+      velfile << "output from task : " << rank << "\n";
       for (j=0; j < (*end-*start) ; j++){
         posfile << (*pos)[3*j]* *sl << "  " << (*pos)[3*j+1]* *sl << "  " << (*pos)[3*j+2]* *sl << "\n";
         velfile << (*vel)[3*j]* *sl << "  " << (*vel)[3*j+1]* *sl << "  " << (*vel)[3*j+2]* *sl << "\n";

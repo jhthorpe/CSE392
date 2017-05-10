@@ -13,21 +13,26 @@
 using namespace std;
 
 //~~~     Electrostatic forces. PvFMM implimentation.     ~~~//
-int Forces_pvfmm::elc_pvfmm(int *N, double *sl, vector<double> *q, vector<double> *pos, vector<double> *force, MPI_Comm* comm)
+int Forces_pvfmm::elc_pvfmm(int *N, double *sl, vector<double> *q, vector<double> *pos, vector<double> *force, MPI_Comm* comm, int *start, int *end)
 {
   // Variables
-  // N		: number of particles (int)
+  // N		: total number of particles in this task (int)
   // sl		: length of cube (nm, double)
   // q		: 1D vector of charges (int)
   // pos	: 1D vector of positions (nm, double)
   // force	: 1D vector of forces (kg nm/ns^2, double)
   // ke		: electric constant in (kg nm^3/ns^2 , double)
-  //
+  // comm	: MPI communicator
+  // start	: starting index for task (int)
+  // end	: ending index for task (int)
 
-  int mult_order=2; //should be taken as an option later
+  int mult_order=8; //should be taken as an option later
 
-  int i;
+  int i,j,rank,maxrank;
   double ke = 8.89755e18 / pow(*sl,3); 	//in kg nm^3 / ns^2 C^2 sl^3	
+
+  MPI_Comm_rank(*comm,&rank);
+  MPI_Allreduce(&rank,&maxrank,1, MPI_INT, MPI_MAX, *comm);  //get maxrank for printing
 
   //########## setup pvfmm
   const pvfmm::Kernel<double>& kernal_fn=pvfmm::LaplaceKernel<double>::gradient();
@@ -54,33 +59,28 @@ int Forces_pvfmm::elc_pvfmm(int *N, double *sl, vector<double> *q, vector<double
   delete tree;
   //##########
 
-  int rank;
-  MPI_Comm_rank(*comm,&rank);
-  if (rank == 0 || rank == 1) {
-    ofstream ffile;
-    if (!rank) {
-      //ofstream ffile0;
-      ffile.open("task0");
-    } else {
-      //ofstream ffile1;
-      ffile.open("task1");
+  MPI_Barrier(*comm);
+  //Pay no attention to the man behind the curtain!
+  for (i=0;i<=maxrank;i++) {
+    if (rank == i) {
+      ofstream ffile;                 
+      if (!rank){
+        ffile.open("forces.txt", ofstream::out);
+      } else {
+        ffile.open("forces.txt", ofstream::out|ofstream::app);
+      }
+      if (!rank) {
+        ffile << "x force, y force, z force (kg nm/ns^2)\n";
+      }
+      ffile << "output from task : " << rank << "\n";
+    for (j=0; j < (*end-*start) ; j++){
+      ffile << (*force)[3*j]* *sl << "  " << (*force)[3*j+1]* *sl << "  " << (*force)[3*j+2]* *sl << "\n";
     }
-    ffile << "forces from task " << rank << endl;
-    for (i=0; i < *N ; i++) ffile << (*force)[3*i]* *sl << "  " << (*force)[3*i+1]* *sl << "  " << (*force)[3*i+2]* *sl << "\n"; 
     ffile.close();
   }
+  MPI_Barrier(*comm);
+}
 
-  //Comment all this out if you don't want to see this 
-  /*
-  ofstream ffile;
-  ffile.open("forces.txt");
-  ffile << "fx, fy, fz (kg nm / ns^2)\n";
-  for (i=0; i < *N ; i++)
-  {
-    ffile << (*force)[3*i]* *sl << "  " << (*force)[3*i+1]* *sl << "  " << (*force)[3*i+2]* *sl << "\n"; 
-  };
-  ffile.close();
-  */
 
   return 0;
 };
