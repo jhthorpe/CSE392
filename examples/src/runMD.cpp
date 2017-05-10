@@ -122,11 +122,11 @@ int main(int argc, char* argv[])
   vector<double> force(taskN*3, 0.0);
   double elcpoten_energy=0.0,LJpoten_energy=0.0;
 
-  cout << "task " << rank << " before elec\n";
-  pot.elc_pvfmm(&taskN,&sl,&q,&pos,&force,&elcpoten_energy,&comm,&start);
-  cout << "task " << rank << " after elec\n";
-  pot.LJ_pvfmm(&taskN,&sl,&sig,&eps,&pos,&force,&LJpoten_energy,&comm);
-  cout << "task " << rank << " after LJ\n";
+  //cout << "task " << rank << " before elec\n";
+  //pot.elc_pvfmm(&taskN,&sl,&q,&pos,&force,&elcpoten_energy,&comm,&start);
+  //cout << "task " << rank << " after elec\n";
+  //pot.LJ_pvfmm(&taskN,&sl,&sig,&eps,&pos,&force,&LJpoten_energy,&comm);
+  //cout << "task " << rank << " after LJ\n";
 
 
   // ~~~~~~~~~~			Testing forces		~~~~~~~~~~//
@@ -140,13 +140,13 @@ int main(int argc, char* argv[])
 //  Forces_pvfmm forces_pvfmm;	//Forces class object, forces
 //  forces_pvfmm.elc_pvfmm(&taskN,&sl,&q,&pos,&force,&comm,&start,&end);
   
-  /*
+  
   // ~~~~~~~~~~			Start verlet		~~~~~~~~~~//
   // Comments: sequential velocity verlet integration. integrates position and velocity with periodic boundary conditions
 
-//  verlet v;           //verlet class object, v
+  verlet v;           //verlet class object, v
 
-//  v.Integration(&N,&ns,&ss,&ts,&sl,&sig,&eps,&q,&mass,&pos,&vel);
+  v.Integration(&taskN,&ns,&ss,&ts,&sl,&sig,&eps,&q,&mass,&pos,&vel,&comm,&start,&end);
 
   //energy e;          //energy class object, e
 
@@ -155,9 +155,10 @@ int main(int argc, char* argv[])
   //e.elcpot_seq(&N,&q,&pos,&elcpot);
 
   //Last line
-  cout << endl << "Exiting runMD with status :" << status << endl;
+ 
+  if(!rank) cout << endl << "Exiting runMD with status :" << status << endl;
 
-  */
+ 
 
   MPI_Finalize();
 

@@ -119,7 +119,7 @@ int potentials::elc_pvfmm(int *N, double *sl, vector<double> *q, vector<double> 
   //create the memory manager
   pvfmm::mem::MemoryManager mem_mgr(10000000);
 
-  size_t max_pts=1;
+  size_t max_pts=10;
   pvfmm::PtFMM_Tree* tree=PtFMM_CreateTree(*pos, *q, dummy, dummy, *pos, *comm, max_pts, pvfmm::FreeSpace );
 
   //initialize the matrices, only needs to be done once
