@@ -45,10 +45,10 @@ void verlet:: Integration(int *N, int *nsteps, int *showsteps, double *tstep, do
   //Initial print a tops of files
   if (!rank){
       ofstream posfile, velfile, efile;
-      posfile.open("traj_pos.txt",ofstream::out);
+      posfile.open("traj_pos.xyz",ofstream::out);
       velfile.open("traj_vel.txt",ofstream::out);
       efile.open("traj_energy.txt",ofstream::out);
-      posfile << "Time(ns) Atom xpos(nm) ypos(nm) zpos(nm)\n"; 
+      posfile << "number of particles\n\n"; 
       velfile << "Time(ns) Atom xvel(nm/ns) yvel(nm/ns) zvel(nm/ns)\n";
       efile << "Time(ns) LJpot(kg-nm^2/ns^2) elcpot(kg-nm^2/ns^2) kin(kg-nm^2/ns^2) T(K)\n";
       posfile.close();
@@ -109,12 +109,12 @@ do {
     for(int j=0;j<=maxrank;j++){
       if (rank == j) {
         ofstream posfile, velfile, efile; 
-        posfile.open("traj_pos.txt", ofstream::out|ofstream::app);
+        posfile.open("traj_pos.xyz", ofstream::out|ofstream::app);
         velfile.open("traj_vel.txt", ofstream::out|ofstream::app);
         efile.open("traj_energy.txt", ofstream::out|ofstream::app);
       
         for (int k=0; k < *N * 3; k+=3){
-          posfile << (*tstep)*step << " " << k/3 << " " << (*pos)[k]*(*sl) << " " << (*pos)[k+1]*(*sl) << " " << (*pos)[k+2]*(*sl) << "\n";
+          posfile << "Ar " << (*pos)[k]*(*sl) << " " << (*pos)[k+1]*(*sl) << " " << (*pos)[k+2]*(*sl) << "\n";
           velfile << (*tstep)*step << " " << k/3 << " " << (*vel)[k]*(*sl) << " " << (*vel)[k+1]*(*sl) << " " << (*vel)[k+2]*(*sl) << "\n";
           efile << (*tstep)*step << " " << LJpot*(*sl * *sl) << " " << elcpot*(*sl * *sl) << " " << kin*(*sl * *sl) << " " << T << "\n";  //Rescale output to correct units (Joules)
         }
